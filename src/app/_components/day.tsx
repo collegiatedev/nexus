@@ -1,13 +1,11 @@
 import dayjs, { Dayjs } from "dayjs";
 import clsx from "clsx";
 
-// import GlobalContext from "../context/GlobalContext";
-
 export const Day = ({ day }: { day: Dayjs }) => {
   return (
-    <div className="group flex flex-col items-center border border-gray-200">
+    <div className="group flex flex-col items-center border ">
       <DayTitle day={day} />
-      <DayEvents />
+      <DayEvents day={day} />
     </div>
   );
 };
@@ -39,7 +37,7 @@ const DayTitle = ({ day }: { day: Dayjs }) => {
   );
 };
 
-const DayEvents = () => {
+const DayEvents = async ({ day }: { day: Dayjs }) => {
   return (
     <>
       <div>hello world</div>
