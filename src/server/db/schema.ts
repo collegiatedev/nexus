@@ -20,5 +20,8 @@ export const tasks = createTable("task", {
     .notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }),
   description: varchar("description", { length: 256 }),
-  dueDate: date("date", { mode: "date" }),
+  dueDate: date("due_date", { mode: "date" }),
 });
+
+export type SelectTask = typeof tasks.$inferSelect;
+export type InsertTask = typeof tasks.$inferInsert;
