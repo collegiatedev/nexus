@@ -1,6 +1,8 @@
 import dayjs, { Dayjs } from "dayjs";
 import clsx from "clsx";
 import { SelectTask } from "~/server/db/schema";
+import { DraggableItem } from "~/components/dnd/draggable";
+import { DroppableContainer } from "~/components/dnd/droppable";
 
 export type DailyTasks = {
   date: dayjs.Dayjs;
@@ -8,10 +10,14 @@ export type DailyTasks = {
 };
 
 export const Day = ({ day }: { day: DailyTasks }) => {
+  const containerId = day.date.toString();
+  const itemIds = day.tasks.map((t) => t.id.toString());
   return (
-    <div className="group flex flex-col items-center border ">
+    <div className="flex flex-col items-center overflow-hidden border">
       <DayTitle date={day.date} />
-      <DayTasks tasks={day.tasks} />
+      <DroppableContainer containerId={containerId} itemIds={itemIds}>
+        <DayTasks tasks={day.tasks} />
+      </DroppableContainer>
     </div>
   );
 };
@@ -46,13 +52,18 @@ const DayTitle = ({ date }: { date: Dayjs }) => {
 const DayTasks = ({ tasks }: { tasks: Array<SelectTask> }) => {
   return (
     <>
-      {tasks.map((task) => (
-        <div key={task.id} className="flex flex-col items-center">
-          <div className="flex h-auto items-center justify-center text-center">
-            {task.name}
-          </div>
-        </div>
-      ))}
+      {tasks.map((task) => {
+        const itemId = task.id.toString();
+        return (
+          <DraggableItem itemId={itemId}>
+            <div key={task.id} className="flex flex-col items-center">
+              <div className="flex h-auto items-center justify-center text-center">
+                {task.name}
+              </div>
+            </div>
+          </DraggableItem>
+        );
+      })}
     </>
   );
 };

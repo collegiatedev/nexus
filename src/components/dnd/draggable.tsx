@@ -3,13 +3,12 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-type Id = string | number;
+interface ItemProps {
+  itemId: string;
+  children: React.ReactNode;
+}
 
-export const DraggableTask = (props: {
-  taskId: Id;
-  containerId: Id;
-  content: string;
-}) => {
+export const DraggableItem = ({ itemId, children }: ItemProps) => {
   const {
     setNodeRef,
     attributes,
@@ -18,10 +17,9 @@ export const DraggableTask = (props: {
     transition,
     isDragging,
   } = useSortable({
-    id: props.taskId,
+    id: itemId,
     data: {
-      type: "Task",
-      props,
+      type: "Task", // Change to Item later
     },
   });
 
@@ -35,10 +33,7 @@ export const DraggableTask = (props: {
       <div
         ref={setNodeRef}
         style={style}
-        className="
-        bg-mainBackgroundColor
-      relative flex h-[100px] min-h-[100px] cursor-grab items-center rounded-xl border-2 border-rose-500 p-2.5 text-left opacity-30
-      "
+        className="cursor-grab border-2 border-rose-500 opacity-30"
       />
     );
   }
@@ -49,11 +44,9 @@ export const DraggableTask = (props: {
       style={style}
       {...attributes}
       {...listeners}
-      className="bg-mainBackgroundColor task relative flex h-[100px] min-h-[100px] cursor-grab items-center rounded-xl p-2.5 text-left hover:ring-2 hover:ring-inset hover:ring-rose-500"
+      className="cursor-grab hover:ring-2 hover:ring-inset hover:ring-rose-500"
     >
-      <p className="my-auto h-[90%] w-full overflow-y-auto overflow-x-hidden whitespace-pre-wrap">
-        {props.content}
-      </p>
+      {children}
     </div>
   );
 };

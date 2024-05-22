@@ -3,6 +3,7 @@ import { DailyTasks, Day } from "./day";
 import { getMyTasks } from "~/server/queries";
 import dayjs from "dayjs";
 import { SelectTask } from "~/server/db/schema";
+import { DroppableContainer } from "~/components/dnd/droppable";
 
 export const Month = async () => {
   const tasks = await getMyTasks();
@@ -12,9 +13,20 @@ export const Month = async () => {
     <div className="grid h-[90%] flex-1 grid-cols-7 grid-rows-5">
       {month.map((row, i) => (
         <React.Fragment key={i}>
-          {row.map((day, idx) => (
-            <Day day={day} key={idx} />
-          ))}
+          {row.map((day, idx) => {
+            const containerId = day.date.toString();
+            const itemIds = day.tasks.map((t) => t.id.toString());
+
+            return (
+              // <DroppableContainer
+              //   key={idx}
+              //   containerId={containerId}
+              //   itemIds={itemIds}
+              // >
+              <Day day={day} key={idx} />
+              // </DroppableContainer>
+            );
+          })}
         </React.Fragment>
       ))}
     </div>

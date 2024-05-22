@@ -24,4 +24,4 @@ export const tasks = createTable("task", {
 });
 
 export type SelectTask = typeof tasks.$inferSelect;
-export type InsertTask = typeof tasks.$inferInsert;
+// export type InsertTask = typeof tasks.$inferInsert;
