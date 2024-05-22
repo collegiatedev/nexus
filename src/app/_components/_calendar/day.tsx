@@ -14,7 +14,7 @@ const DayTitle = ({ day }: { day: Dayjs }) => {
   return (
     <div className="flex w-full justify-between p-2 text-sm">
       <div className="flex h-auto items-center justify-center text-center">
-        {/* on click open parallel rendering modal */}
+        {/* todo: on click open parallel rendering modal */}
         <button className="hidden size-6 items-center justify-center rounded-md bg-gray-500 group-hover:flex">
           +
         </button>

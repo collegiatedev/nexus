@@ -6,7 +6,7 @@ export default defineConfig({
   out: "./supabase/migrations",
   dialect: "postgresql",
   dbCredentials: {
-    url: env.DATABASE_URL,
+    url: env.POSTGRES_URL,
   },
   tablesFilter: ["nexus_*"],
 });

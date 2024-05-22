@@ -1,13 +1,13 @@
-"use client";
+// "use client";
 
 import { useState } from "react";
 import { getMonth } from "~/lib/utils";
-import { Month } from "./_components/calendar/month";
-import { Navbar } from "./_components/calendar/navbar";
+import { Month } from "./_components/_calendar/month";
+import { Navbar } from "./_components/_calendar/navbar";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { getMyTasks } from "~/server/queries";
 
-export default function Home() {
-  const [currentMonth, setCurrentMonth] = useState(getMonth());
+export default async function Home() {
   return (
     <main className="h-dvh">
       {/* <Navbar /> */}
@@ -17,7 +17,7 @@ export default function Home() {
       </SignedOut>
 
       <SignedIn>
-        <Month month={currentMonth} />
+        <Month />
       </SignedIn>
     </main>
   );
