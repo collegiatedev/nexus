@@ -1,11 +1,10 @@
 "use client";
 
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
-import { DraggableItem } from "./draggable";
+import { useDnDStore } from "~/lib/store";
 
 interface ContainerProps {
   containerId: string;
-  itemIds: Array<string>;
   children: React.ReactNode;
 }
 
@@ -13,13 +12,10 @@ interface ContainerProps {
 // droppable container should only be a wrapper
 export const DroppableContainer = ({
   containerId,
-  itemIds,
   children,
 }: ContainerProps) => {
-  // todo, check if this is how you use useMemo here
-  // const tasksIds = useMemo(() => {
-  //   return itemIds.map((id) => id);
-  // }, [itemIds]);
+  // since this is an array, double check if rerenders properly when elements updated
+  const getContainer = useDnDStore((state) => state.getContainer);
 
   const { setNodeRef } = useSortable({
     id: containerId,
@@ -29,17 +25,13 @@ export const DroppableContainer = ({
   });
 
   return (
-    <div ref={setNodeRef}>
-      {/* <div className="flex flex-grow flex-col gap-4 overflow-y-auto overflow-x-hidden p-2"> */}
-      <div>
-        <SortableContext items={itemIds}>
-          {itemIds.map((id) => (
-            <DraggableItem key={id} itemId={id}>
-              {children}
-            </DraggableItem>
-          ))}
-        </SortableContext>
-      </div>
+    <div
+      ref={setNodeRef}
+      className="h-full w-full rounded-lg border border-green-500 p-2"
+    >
+      <SortableContext items={getContainer(containerId)}>
+        {children}
+      </SortableContext>
     </div>
   );
 };

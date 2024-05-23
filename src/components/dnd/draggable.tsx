@@ -34,7 +34,9 @@ export const DraggableItem = ({ itemId, children }: ItemProps) => {
         ref={setNodeRef}
         style={style}
         className="cursor-grab border-2 border-rose-500 opacity-30"
-      />
+      >
+        yo
+      </div>
     );
   }
 

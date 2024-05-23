@@ -7,6 +7,8 @@ import { Navbar } from "./_components/_calendar/navbar";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { getMyTasks } from "~/server/queries";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   return (
     <main className="h-dvh">

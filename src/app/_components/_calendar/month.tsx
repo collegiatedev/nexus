@@ -3,33 +3,24 @@ import { DailyTasks, Day } from "./day";
 import { getMyTasks } from "~/server/queries";
 import dayjs from "dayjs";
 import { SelectTask } from "~/server/db/schema";
-import { DroppableContainer } from "~/components/dnd/droppable";
+import { DnDBoard } from "~/components/dnd/dnd";
 
 export const Month = async () => {
   const tasks = await getMyTasks();
   const month = getMonth(tasks);
 
   return (
-    <div className="grid h-[90%] flex-1 grid-cols-7 grid-rows-5">
-      {month.map((row, i) => (
-        <React.Fragment key={i}>
-          {row.map((day, idx) => {
-            const containerId = day.date.toString();
-            const itemIds = day.tasks.map((t) => t.id.toString());
-
-            return (
-              // <DroppableContainer
-              //   key={idx}
-              //   containerId={containerId}
-              //   itemIds={itemIds}
-              // >
-              <Day day={day} key={idx} />
-              // </DroppableContainer>
-            );
-          })}
-        </React.Fragment>
-      ))}
-    </div>
+    <DnDBoard>
+      <div className="grid h-[90%] flex-1 grid-cols-7 grid-rows-5">
+        {month.map((row, i) => (
+          <React.Fragment key={i}>
+            {row.map((day, idx) => (
+              <Day initDay={day} key={idx} />
+            ))}
+          </React.Fragment>
+        ))}
+      </div>
+    </DnDBoard>
   );
 };
 
@@ -57,7 +48,7 @@ const getMonth = (monthlyTasks: Array<SelectTask>, month = dayjs().month()) => {
         taskPointer++;
       }
       return {
-        date,
+        date: date.toDate(),
         tasks: currentTasks,
       };
     });
