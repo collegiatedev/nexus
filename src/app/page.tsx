@@ -1,13 +1,7 @@
-// "use client";
-
-import { useState } from "react";
-import { getMonth } from "~/lib/utils";
-import { Month } from "./_components/_calendar/month";
 import { Navbar } from "./_components/_calendar/navbar";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { getMyTasks } from "~/server/queries";
-
-export const dynamic = "force-dynamic";
+import { Calendar } from "./_components/_calendar/calendar";
 
 export default async function Home() {
   return (
@@ -19,7 +13,7 @@ export default async function Home() {
       </SignedOut>
 
       <SignedIn>
-        <Month />
+        <Calendar />
       </SignedIn>
     </main>
   );

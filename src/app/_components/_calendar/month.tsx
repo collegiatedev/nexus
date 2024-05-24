@@ -1,16 +1,28 @@
+"use client";
+
 import React from "react";
 import { DailyTasks, Day } from "./day";
-import { getMyTasks } from "~/server/queries";
 import dayjs from "dayjs";
 import { SelectTask } from "~/server/db/schema";
 import { DnDBoard } from "~/components/dnd/dnd";
+import { useActiveDayStore } from "~/lib/store/task";
 
-export const Month = async () => {
-  const tasks = await getMyTasks();
+export const DraggingTask = () => {
+  const activeTask = useActiveDayStore((state) => state.getActiveTask());
+  return (
+    <div className="flex cursor-grab flex-col items-center">
+      <div className="flex h-auto items-center justify-center text-center">
+        {activeTask}
+      </div>
+    </div>
+  );
+};
+
+export const Month = ({ tasks }: { tasks: Array<SelectTask> }) => {
   const month = getMonth(tasks);
 
   return (
-    <DnDBoard>
+    <DnDBoard DraggingItem={DraggingTask}>
       <div className="grid h-[90%] flex-1 grid-cols-7 grid-rows-5">
         {month.map((row, i) => (
           <React.Fragment key={i}>

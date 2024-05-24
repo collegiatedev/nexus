@@ -1,7 +1,7 @@
 "use client";
 
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
-import { useDnDStore } from "~/lib/store";
+import { useDnDStore } from "~/lib/store/dnd";
 
 interface ContainerProps {
   containerId: string;

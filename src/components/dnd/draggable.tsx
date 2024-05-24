@@ -2,13 +2,20 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useEffect } from "react";
 
 interface ItemProps {
   itemId: string;
   children: React.ReactNode;
+  // function for updating the data for the item you're dragging
+  updateDraggingItem: () => void;
 }
 
-export const DraggableItem = ({ itemId, children }: ItemProps) => {
+export const DraggableItem = ({
+  itemId,
+  updateDraggingItem,
+  children,
+}: ItemProps) => {
   const {
     setNodeRef,
     attributes,
@@ -23,6 +30,10 @@ export const DraggableItem = ({ itemId, children }: ItemProps) => {
     },
   });
 
+  useEffect(() => {
+    if (isDragging) updateDraggingItem();
+  }, [isDragging]);
+
   const style = {
     transition,
     transform: CSS.Transform.toString(transform),
@@ -35,7 +46,7 @@ export const DraggableItem = ({ itemId, children }: ItemProps) => {
         style={style}
         className="cursor-grab border-2 border-rose-500 opacity-30"
       >
-        yo
+        {children}
       </div>
     );
   }

@@ -6,7 +6,9 @@ import { SelectTask } from "~/server/db/schema";
 import { DraggableItem } from "~/components/dnd/draggable";
 import { DroppableContainer } from "~/components/dnd/droppable";
 import { useEffect, useState } from "react";
-import { useDnDStore } from "~/lib/store";
+import { useDnDStore } from "~/lib/store/dnd";
+import { useSortable } from "@dnd-kit/sortable";
+import { useActiveDayStore } from "~/lib/store/task";
 
 export type DailyTasks = {
   date: Date;
@@ -34,7 +36,7 @@ export const Day = ({ initDay }: { initDay: DailyTasks }) => {
     <div className="flex flex-col items-center overflow-hidden border">
       <DayTitle date={initDay.date} />
       <DroppableContainer containerId={containerId}>
-        <DayTasks tasks={tasks} />
+        <DayTasks tasks={tasks} key={containerId} />
       </DroppableContainer>
     </div>
   );
@@ -69,12 +71,18 @@ const DayTitle = ({ date }: { date: Date }) => {
 };
 
 const DayTasks = ({ tasks }: { tasks: Array<SelectTask> }) => {
+  const updateActiveTask = useActiveDayStore((state) => state.updateActiveTask);
+
   return (
     <>
       {tasks.map((task) => {
         const itemId = task.id.toString();
         return (
-          <DraggableItem itemId={itemId}>
+          <DraggableItem
+            key={task.id}
+            itemId={itemId}
+            updateDraggingItem={() => updateActiveTask(task.name as string)}
+          >
             <div key={task.id} className="flex flex-col items-center">
               <div className="flex h-auto items-center justify-center text-center">
                 {task.name}

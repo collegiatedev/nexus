@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   DndContext,
   DragEndEvent,
@@ -15,11 +15,22 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 
 // context wrapper for dnd
-export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
+
+interface DnDBoardProps {
+  children: React.ReactNode;
+  DraggingItem: React.ComponentType;
+}
+
+export const DnDBoard = ({ children, DraggingItem }: DnDBoardProps) => {
   // const [tasks, setTasks] = useState<Task[]>(defaultTasks);
   const [activeTaskId, setActiveTaskId] = useState<UniqueIdentifier | null>(
     null,
   );
+
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -37,15 +48,13 @@ export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
         onDragOver={onDragOver}
       >
         {children}
-        {/* {createPortal(
-          <DragOverlay>
-            {activeTaskId && (
-              // <TaskCard task={activeTask} />
-              <p>hello</p>
-            )}
-          </DragOverlay>,
-          document.body,
-        )} */}
+        {isClient &&
+          createPortal(
+            <DragOverlay>
+              <DraggingItem />
+            </DragOverlay>,
+            document.body,
+          )}
       </DndContext>
     </div>
   );
@@ -53,7 +62,6 @@ export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
   function onDragStart(event: DragStartEvent) {
     // todo: rename to "Item"
     if (event.active.data.current?.type === "Task") {
-      console.log("onDragStart", event.active.data.current);
       const activeId = event.active.id;
       setActiveTaskId(activeId);
       return;
