@@ -1,13 +1,12 @@
 "use client";
 
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import clsx from "clsx";
 import { SelectTask } from "~/server/db/schema";
 import { DraggableItem } from "~/components/dnd/draggable";
 import { DroppableContainer } from "~/components/dnd/droppable";
 import { useEffect, useState } from "react";
 import { useDnDStore } from "~/lib/store/dnd";
-import { useSortable } from "@dnd-kit/sortable";
 import { useActiveDayStore } from "~/lib/store/task";
 
 export type DailyTasks = {
@@ -19,6 +18,12 @@ export type DailyTasks = {
 // need to look into how these components integrate
 // probably will need to duplicate store state
 export const Day = ({ initDay }: { initDay: DailyTasks }) => {
+  // for rendering the add task button
+  const [isHovered, setIsHovered] = useState(false);
+  const handleMouseEnter = () => setIsHovered(true);
+  const handleMouseLeave = () => setIsHovered(false);
+
+  // tasks are synced to the store, we intialize storage using initDay query
   const containerId = initDay.date.toString();
   const itemIds = initDay.tasks.map((t) => t.id.toString());
 
@@ -33,8 +38,12 @@ export const Day = ({ initDay }: { initDay: DailyTasks }) => {
   ) as Array<SelectTask>;
 
   return (
-    <div className="flex flex-col items-center overflow-hidden border">
-      <DayTitle date={initDay.date} />
+    <div
+      className="flex flex-col items-center overflow-hidden border"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <DayTitle date={initDay.date} showAddButton={isHovered} />
       <DroppableContainer containerId={containerId}>
         <DayTasks tasks={tasks} key={containerId} />
       </DroppableContainer>
@@ -42,15 +51,23 @@ export const Day = ({ initDay }: { initDay: DailyTasks }) => {
   );
 };
 
-const DayTitle = ({ date }: { date: Date }) => {
+const DayTitle = ({
+  date,
+  showAddButton,
+}: {
+  date: Date;
+  showAddButton: boolean;
+}) => {
   const dateDayjs = dayjs(date);
   return (
     <div className="flex w-full justify-between p-2 text-sm">
       <div className="flex h-auto items-center justify-center text-center">
         {/* todo: on click open parallel rendering modal */}
-        <button className="hidden size-6 items-center justify-center rounded-md bg-gray-500 group-hover:flex">
-          +
-        </button>
+        {showAddButton && (
+          <button className="size-6 items-center justify-center rounded-md bg-gray-500">
+            +
+          </button>
+        )}
       </div>
 
       <header className="flex">
