@@ -40,7 +40,7 @@ export const DnDBoard = ({ children, DraggingItem }: DnDBoardProps) => {
   );
 
   return (
-    <div>
+    <div className="h-full w-full">
       <DndContext sensors={sensors} onDragOver={onDragOver}>
         {children}
         {isClient &&

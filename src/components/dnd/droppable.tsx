@@ -25,7 +25,7 @@ export const DroppableContainer = ({
   });
 
   return (
-    <div ref={setNodeRef} className="h-full w-full rounded-lg p-2">
+    <div ref={setNodeRef} className="h-full w-full">
       <SortableContext items={getContainer(containerId)}>
         {children}
       </SortableContext>

@@ -37,14 +37,12 @@ export const Day = ({ initDay }: { initDay: DailyTasks }) => {
 
   return (
     <div
-      className="flex flex-col items-center overflow-hidden border"
+      className="relative flex h-full w-full flex-col items-center  border"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       <DayTitle date={initDay.date} showAddButton={isHovered} />
-      <DroppableContainer containerId={containerId}>
-        <DayTasks tasks={tasks} />
-      </DroppableContainer>
+      <DayTasks containerId={containerId} tasks={tasks} />
     </div>
   );
 };
@@ -58,7 +56,7 @@ const DayTitle = ({
 }) => {
   const dateDayjs = dayjs(date);
   return (
-    <div className="flex w-full justify-between border border-indigo-600 p-2 text-sm">
+    <div className="flex h-[50px] w-full justify-between px-1 pb-1 pt-2 text-sm">
       <div className="flex h-auto items-center justify-center text-center">
         {showAddButton && (
           <button className="size-6 items-center justify-center rounded-md bg-gray-500">
@@ -66,7 +64,6 @@ const DayTitle = ({
           </button>
         )}
       </div>
-
       <header className="flex">
         <p className="flex h-auto items-center justify-center text-center">
           {dateDayjs.format("D") === "1" && dateDayjs.format("MMM")}
@@ -84,30 +81,41 @@ const DayTitle = ({
   );
 };
 
-const DayTasks = React.memo(({ tasks }: { tasks: Array<SelectTask> }) => {
-  const updateActiveTask = useActiveDayStore((state) => state.updateActiveTask);
-  console.log("tasks", tasks);
+const DayTasks = React.memo(
+  ({
+    containerId,
+    tasks,
+  }: {
+    containerId: string;
+    tasks: Array<SelectTask>;
+  }) => {
+    const updateActiveTask = useActiveDayStore(
+      (state) => state.updateActiveTask,
+    );
+    console.log("tasks", tasks);
 
-  return (
-    <div className="h-full w-full border border-green-600">
-      {tasks.map((task) => {
-        const itemId = task.id.toString();
-        return (
-          <DraggableItem
-            key={task.id}
-            itemId={itemId}
-            updateDraggingItem={() => updateActiveTask(task.name as string)}
-          >
-            <div key={task.id} className="flex flex-col items-center">
-              <div className="flex h-auto items-center justify-center text-center">
-                {task.name}
-              </div>
+    return (
+      <DroppableContainer containerId={containerId}>
+        {tasks.map((task) => {
+          const itemId = task.id.toString();
+          return (
+            <div className="w-full" key={task.id}>
+              <DraggableItem
+                itemId={itemId}
+                updateDraggingItem={() => updateActiveTask(task.name as string)}
+              >
+                <div className="flex flex-col items-center">
+                  <div className="flex h-auto items-center justify-center text-center">
+                    {task.name}
+                  </div>
+                </div>
+              </DraggableItem>
             </div>
-          </DraggableItem>
-        );
-      })}
-    </div>
-  );
-});
+          );
+        })}
+      </DroppableContainer>
+    );
+  },
+);
 
 export default Day;

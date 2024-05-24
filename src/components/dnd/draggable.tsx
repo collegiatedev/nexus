@@ -44,7 +44,7 @@ export const DraggableItem = ({
       <div
         ref={setNodeRef}
         style={style}
-        className="cursor-grab border-2 border-rose-500 opacity-30"
+        className="h-full w-full cursor-grab border-2 border-rose-500 opacity-30"
       >
         {children}
       </div>
@@ -57,7 +57,7 @@ export const DraggableItem = ({
       style={style}
       {...attributes}
       {...listeners}
-      className="cursor-grab hover:ring-2 hover:ring-inset hover:ring-rose-500"
+      className="h-full w-full cursor-grab hover:ring-2 hover:ring-inset hover:ring-rose-500"
     >
       {children}
     </div>
