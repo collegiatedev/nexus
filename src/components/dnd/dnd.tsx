@@ -11,8 +11,8 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
+import { useDnDStore } from "~/lib/store/dnd";
 
 // context wrapper for dnd
 
@@ -22,10 +22,9 @@ interface DnDBoardProps {
 }
 
 export const DnDBoard = ({ children, DraggingItem }: DnDBoardProps) => {
-  // const [tasks, setTasks] = useState<Task[]>(defaultTasks);
-  const [activeTaskId, setActiveTaskId] = useState<UniqueIdentifier | null>(
-    null,
-  );
+  const moveWithinContainer = useDnDStore((state) => state.moveWithinContainer);
+  const moveIntoContainer = useDnDStore((state) => state.moveIntoContainer);
+  const getItem = useDnDStore((state) => state.getItem);
 
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
@@ -42,11 +41,7 @@ export const DnDBoard = ({ children, DraggingItem }: DnDBoardProps) => {
 
   return (
     <div>
-      <DndContext
-        sensors={sensors}
-        onDragStart={onDragStart}
-        onDragOver={onDragOver}
-      >
+      <DndContext sensors={sensors} onDragOver={onDragOver}>
         {children}
         {isClient &&
           createPortal(
@@ -59,52 +54,48 @@ export const DnDBoard = ({ children, DraggingItem }: DnDBoardProps) => {
     </div>
   );
 
-  function onDragStart(event: DragStartEvent) {
-    // todo: rename to "Item"
-    if (event.active.data.current?.type === "Task") {
-      const activeId = event.active.id;
-      setActiveTaskId(activeId);
-      return;
-    }
-  }
-
   function onDragOver(event: DragOverEvent) {
     const { active, over } = event;
     if (!over) return;
 
-    const activeId = active.id;
-    const overId = over.id;
+    const activeId = active.id.toString();
+    const overId = over.id.toString();
     if (activeId === overId) return;
 
-    // todo, rename to item
     const isActiveATask = active.data.current?.type === "Task";
     const isOverATask = over.data.current?.type === "Task";
+    const isOverAColumn = over.data.current?.type === "Column";
+
     if (!isActiveATask) return;
 
-    // Im dropping a Task over another Task
-    // if (isActiveATask && isOverATask) {
-    //   setTasks((tasks) => {
-    //     const activeIndex = tasks.findIndex((t) => t.id === activeId);
-    //     const overIndex = tasks.findIndex((t) => t.id === overId);
+    const activeItem = getItem(activeId);
+    const overItem = getItem(overId);
+    if (!activeItem || (!overItem && !isOverAColumn)) return;
 
-    //     if (tasks[activeIndex].columnId != tasks[overIndex].columnId) {
-    //       tasks[activeIndex].columnId = tasks[overIndex].columnId;
-    //       return arrayMove(tasks, activeIndex, overIndex - 1);
-    //     }
+    if (overItem && isActiveATask && isOverATask) {
+      if (activeItem.containerId !== overItem.containerId) {
+        moveIntoContainer(
+          activeId,
+          activeItem.containerId,
+          overItem.containerId,
+          overItem.index,
+        );
+      } else {
+        moveWithinContainer(
+          activeItem.containerId,
+          activeItem.index,
+          overItem.index,
+        );
+      }
+    }
 
-    //     return arrayMove(tasks, activeIndex, overIndex);
-    //   });
-    // }
-
-    // const isOverAColumn = over.data.current?.type === "Column";
-
-    // // Dropping a task over a column
-    // if (isActiveATask && isOverAColumn) {
-    //   setTasks((tasks) => {
-    //     const activeIndex = tasks.findIndex((t) => t.id === activeId);
-    //     tasks[activeIndex].columnId = overId;
-    //     return arrayMove(tasks, activeIndex, activeIndex);
-    //   });
-    // }
+    if (isActiveATask && isOverAColumn) {
+      moveIntoContainer(
+        activeId,
+        activeItem.containerId,
+        overId,
+        getItem(overId)?.index ?? 0,
+      );
+    }
   }
 };

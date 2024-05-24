@@ -5,25 +5,21 @@ import clsx from "clsx";
 import { SelectTask } from "~/server/db/schema";
 import { DraggableItem } from "~/components/dnd/draggable";
 import { DroppableContainer } from "~/components/dnd/droppable";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDnDStore } from "~/lib/store/dnd";
 import { useActiveDayStore } from "~/lib/store/task";
+import React from "react";
 
 export type DailyTasks = {
   date: Date;
   tasks: Array<SelectTask>;
 };
 
-// zustand for now, but react-server-actions in future?
-// need to look into how these components integrate
-// probably will need to duplicate store state
 export const Day = ({ initDay }: { initDay: DailyTasks }) => {
-  // for rendering the add task button
   const [isHovered, setIsHovered] = useState(false);
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => setIsHovered(false);
 
-  // tasks are synced to the store, we intialize storage using initDay query
   const containerId = initDay.date.toString();
   const itemIds = initDay.tasks.map((t) => t.id.toString());
 
@@ -33,9 +29,11 @@ export const Day = ({ initDay }: { initDay: DailyTasks }) => {
   }, [containerId, itemIds]);
 
   const getContainer = useDnDStore((state) => state.getContainer);
-  const tasks = getContainer(containerId).map((itemId) =>
-    initDay.tasks.find((task) => task.id.toString() === itemId),
-  ) as Array<SelectTask>;
+  const tasks = useMemo(() => {
+    return getContainer(containerId).map((itemId) =>
+      initDay.tasks.find((task) => task.id.toString() === itemId),
+    ) as Array<SelectTask>;
+  }, [containerId, initDay.tasks, getContainer]);
 
   return (
     <div
@@ -45,7 +43,7 @@ export const Day = ({ initDay }: { initDay: DailyTasks }) => {
     >
       <DayTitle date={initDay.date} showAddButton={isHovered} />
       <DroppableContainer containerId={containerId}>
-        <DayTasks tasks={tasks} key={containerId} />
+        <DayTasks tasks={tasks} />
       </DroppableContainer>
     </div>
   );
@@ -60,9 +58,8 @@ const DayTitle = ({
 }) => {
   const dateDayjs = dayjs(date);
   return (
-    <div className="flex w-full justify-between p-2 text-sm">
+    <div className="flex w-full justify-between border border-indigo-600 p-2 text-sm">
       <div className="flex h-auto items-center justify-center text-center">
-        {/* todo: on click open parallel rendering modal */}
         {showAddButton && (
           <button className="size-6 items-center justify-center rounded-md bg-gray-500">
             +
@@ -87,11 +84,12 @@ const DayTitle = ({
   );
 };
 
-const DayTasks = ({ tasks }: { tasks: Array<SelectTask> }) => {
+const DayTasks = React.memo(({ tasks }: { tasks: Array<SelectTask> }) => {
   const updateActiveTask = useActiveDayStore((state) => state.updateActiveTask);
+  console.log("tasks", tasks);
 
   return (
-    <>
+    <div className="h-full w-full border border-green-600">
       {tasks.map((task) => {
         const itemId = task.id.toString();
         return (
@@ -108,6 +106,8 @@ const DayTasks = ({ tasks }: { tasks: Array<SelectTask> }) => {
           </DraggableItem>
         );
       })}
-    </>
+    </div>
   );
-};
+});
+
+export default Day;
