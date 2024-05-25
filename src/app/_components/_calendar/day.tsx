@@ -9,6 +9,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useDnDStore } from "~/lib/store/dnd";
 import { useActiveDayStore } from "~/lib/store/task";
 import React from "react";
+import { Task } from "./task";
 
 export type DailyTasks = {
   date: Date;
@@ -16,53 +17,64 @@ export type DailyTasks = {
 };
 
 export const Day = ({ initDay }: { initDay: DailyTasks }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const handleMouseEnter = () => setIsHovered(true);
-  const handleMouseLeave = () => setIsHovered(false);
+  // const [isHovered, setIsHovered] = useState(false);
+  // const handleMouseEnter = () => setIsHovered(true);
+  // const handleMouseLeave = () => setIsHovered(false);
 
-  const containerId = initDay.date.toString();
+  const containerId = initDay.date.toString(); // change me
   const itemIds = initDay.tasks.map((t) => t.id.toString());
 
   const addContainer = useDnDStore((state) => state.addContainer);
   useEffect(() => {
     addContainer(containerId, itemIds);
-  }, [containerId, itemIds]);
+  }, []);
 
   const getContainer = useDnDStore((state) => state.getContainer);
-  const tasks = useMemo(() => {
-    return getContainer(containerId).map((itemId) =>
-      initDay.tasks.find((task) => task.id.toString() === itemId),
-    ) as Array<SelectTask>;
-  }, [containerId, initDay.tasks, getContainer]);
 
+  // console.log("z0: pre-mem updating; using containerId", containerId);
+  // const tasks = useMemo(() => {
+  //   console.log("z1: mem updating; using containerId", containerId);
+  //   return getContainer(containerId).map((itemId) =>
+  //     initDay.tasks.find((task) => task.id.toString() === itemId),
+  //   ) as Array<SelectTask>;
+  // }, [containerId, initDay.tasks, containers]);
+  const tasks = getContainer(containerId).map((itemId) =>
+    initDay.tasks.find((task) => task.id.toString() === itemId),
+  ) as Array<SelectTask>;
+  console.log("z2: tasks", containerId, tasks);
   return (
     <div
       className="relative flex h-full w-full flex-col items-center  border"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      // onMouseEnter={handleMouseEnter}
+      // onMouseLeave={handleMouseLeave}
     >
-      <DayTitle date={initDay.date} showAddButton={isHovered} />
+      <DayTitle
+        date={initDay.date}
+        // showAddButton={isHovered}
+      />
       <DayTasks containerId={containerId} tasks={tasks} />
+      container: {containerId}
     </div>
   );
 };
 
 const DayTitle = ({
   date,
-  showAddButton,
+  // showAddButton,
 }: {
   date: Date;
-  showAddButton: boolean;
+  // showAddButton: boolean;
 }) => {
   const dateDayjs = dayjs(date);
   return (
-    <div className="flex h-[50px] w-full justify-between px-1 pb-1 pt-2 text-sm">
+    <div className="flex h-[50px] w-full justify-between px-2 pb-1 pt-2 text-sm">
       <div className="flex h-auto items-center justify-center text-center">
-        {showAddButton && (
+        {
+          // showAddButton &&
           <button className="size-6 items-center justify-center rounded-md bg-gray-500">
             +
           </button>
-        )}
+        }
       </div>
       <header className="flex">
         <p className="flex h-auto items-center justify-center text-center">
@@ -92,23 +104,20 @@ const DayTasks = React.memo(
     const updateActiveTask = useActiveDayStore(
       (state) => state.updateActiveTask,
     );
-    console.log("tasks", tasks);
 
     return (
       <DroppableContainer containerId={containerId}>
         {tasks.map((task) => {
+          console.log("z3:moment before disaster containerId", containerId);
+          console.log("moment before disaster tasks", tasks);
           const itemId = task.id.toString();
           return (
-            <div className="w-full" key={task.id}>
+            <div key={task.id} className="h-auto w-auto">
               <DraggableItem
                 itemId={itemId}
                 updateDraggingItem={() => updateActiveTask(task.name as string)}
               >
-                <div className="flex flex-col items-center">
-                  <div className="flex h-auto items-center justify-center text-center">
-                    {task.name}
-                  </div>
-                </div>
+                <Task task={task} />
               </DraggableItem>
             </div>
           );
@@ -117,5 +126,3 @@ const DayTasks = React.memo(
     );
   },
 );
-
-export default Day;

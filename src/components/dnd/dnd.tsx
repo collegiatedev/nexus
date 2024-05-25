@@ -55,6 +55,7 @@ export const DnDBoard = ({ children, DraggingItem }: DnDBoardProps) => {
   );
 
   function onDragOver(event: DragOverEvent) {
+    console.log("onDragOver");
     const { active, over } = event;
     if (!over) return;
 
@@ -72,6 +73,7 @@ export const DnDBoard = ({ children, DraggingItem }: DnDBoardProps) => {
     const overItem = getItem(overId);
     if (!activeItem || (!overItem && !isOverAColumn)) return;
 
+    // moving an item over another item
     if (overItem && isActiveATask && isOverATask) {
       if (activeItem.containerId !== overItem.containerId) {
         moveIntoContainer(
@@ -89,7 +91,9 @@ export const DnDBoard = ({ children, DraggingItem }: DnDBoardProps) => {
       }
     }
 
+    // moving an item into another container
     if (isActiveATask && isOverAColumn) {
+      console.log("isActiveATask && isOverAColumn");
       moveIntoContainer(
         activeId,
         activeItem.containerId,

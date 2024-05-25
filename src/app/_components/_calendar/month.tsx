@@ -5,7 +5,7 @@ import { DailyTasks, Day } from "./day";
 import dayjs from "dayjs";
 import { SelectTask } from "~/server/db/schema";
 import { DnDBoard } from "~/components/dnd/dnd";
-import { useActiveDayStore } from "~/lib/store/task";
+import { DraggingTask } from "./task";
 
 export const Month = ({ tasks }: { tasks: Array<SelectTask> }) => {
   const month = getMonth(tasks);
@@ -21,17 +21,6 @@ export const Month = ({ tasks }: { tasks: Array<SelectTask> }) => {
         ))}
       </div>
     </DnDBoard>
-  );
-};
-
-const DraggingTask = () => {
-  const activeTask = useActiveDayStore((state) => state.getActiveTask());
-  return (
-    <div className="flex cursor-grab flex-col items-center">
-      <div className="flex h-auto items-center justify-center text-center">
-        {activeTask}
-      </div>
-    </div>
   );
 };
 

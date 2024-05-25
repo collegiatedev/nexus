@@ -44,7 +44,7 @@ export const DraggableItem = ({
       <div
         ref={setNodeRef}
         style={style}
-        className="h-full w-full cursor-grab border-2 border-rose-500 opacity-30"
+        className="cursor-grab border-2 border-rose-500 opacity-30"
       >
         {children}
       </div>

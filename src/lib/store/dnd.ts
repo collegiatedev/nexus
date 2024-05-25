@@ -12,7 +12,7 @@ interface DnDState {
     [itemId: string]: { index: number; containerId: string };
   };
   // { itemId: {index, containerId} }
-
+  getContainers: () => { [containerId: string]: string[] };
   getContainer: (containerId: string) => string[];
   getItem: (
     itemId: string,
@@ -38,6 +38,7 @@ export const useDnDStore = create<DnDState>((set, get) => ({
   containers: {},
   items: {},
 
+  getContainers: () => get().containers,
   getContainer: (containerId: string) => get().containers[containerId] || [],
   getItem: (itemId: string) => get().items[itemId],
 
@@ -141,6 +142,10 @@ export const useDnDStore = create<DnDState>((set, get) => ({
       fromContainer.forEach((id, index) => {
         updatedItems[id] = { index, containerId: fromContainerId };
       });
+
+      console.log("updatedItems", updatedItems);
+      console.log("fromContainer", fromContainerId, fromContainer);
+      console.log("toContainer", toContainerId, toContainer);
 
       return {
         containers: {
