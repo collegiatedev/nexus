@@ -6,5 +6,5 @@ export const dynamic = "force-dynamic";
 export const Calendar = async () => {
   const tasks = await getMyTasks();
 
-  return <Month tasks={tasks} />;
+  return <Month initTasks={tasks} />;
 };
