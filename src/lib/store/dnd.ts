@@ -1,5 +1,5 @@
 import { arrayMove } from "@dnd-kit/sortable";
-import { create } from "zustand";
+import { StateCreator } from "zustand";
 
 export type Column = {
   id: string;
@@ -15,7 +15,7 @@ export type Container = {
   tasks: Task[];
 };
 
-interface DnDState {
+export interface DnDSlice {
   // data
   containers: Map<string, Container>; // Using Map for containers
   tasksRef: Map<string, { index: number; containerId: string }>; // Using Map for tasks
@@ -36,7 +36,10 @@ interface DnDState {
   // remove is gonna fuck up the indexes
   // might need to just use a tree or somthing decent
 }
-export const useDnDStore = create<DnDState>((set, get) => ({
+export const createDnDSlice: StateCreator<DnDSlice, [], [], DnDSlice> = (
+  set,
+  get,
+) => ({
   // data
   containers: new Map<string, Container>(),
   tasksRef: new Map<string, { index: number; containerId: string }>(),
@@ -186,4 +189,4 @@ export const useDnDStore = create<DnDState>((set, get) => ({
       });
     }
   },
-}));
+});

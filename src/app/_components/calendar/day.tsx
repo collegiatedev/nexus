@@ -3,13 +3,14 @@
 import dayjs from "dayjs";
 import clsx from "clsx";
 import React from "react";
-import { Task, useDnDStore } from "~/lib/store";
 import { DraggableTask } from "./dnd/task";
 import { DroppableColumn } from "./dnd/column";
+import { useMyStore } from "~/lib/store/myStore";
+import { Task } from "~/lib/store/dnd";
 
 export const Day = ({ dayId }: { dayId: string }) => {
-  const getTasks = useDnDStore((state) => state.getTasks);
-  const dayContainer = useDnDStore((state) => state.getContainer(dayId));
+  const getTasks = useMyStore.use.getTasks();
+  const dayContainer = useMyStore((state) => state.getContainer(dayId));
   if (!dayContainer) return;
 
   // const [isHovered, setIsHovered] = useState(false);

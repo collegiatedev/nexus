@@ -10,12 +10,13 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { createPortal } from "react-dom";
-import { Task, useDnDStore } from "~/lib/store";
 import { DraggableTask } from "./task";
+import { useMyStore } from "~/lib/store/myStore";
+import { Task } from "~/lib/store/dnd";
 
 export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
   const [draggingTask, setDraggingTask] = useState<Task | null>(null);
-  const swapTasks = useDnDStore((state) => state.swapTasks);
+  const swapTasks = useMyStore.use.swapTasks();
 
   // need to wait till client is loaded to access document.body in createPortal
   const [isClient, setIsClient] = useState(false);

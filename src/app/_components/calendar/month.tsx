@@ -4,16 +4,19 @@ import React, { useEffect } from "react";
 import dayjs from "dayjs";
 import { SelectTask } from "~/server/db/schema";
 import { Day } from "./day";
-import { useDnDStore } from "~/lib/store";
 import { dateAsId } from "~/lib/utils";
 import { DnDBoard } from "./dnd/board";
+import { useMyStore } from "~/lib/store/myStore";
+
+// TODO: useSyncExternalStore
 
 export const Month = ({ initTasks }: { initTasks: Array<SelectTask> }) => {
   const month = getMonth(initTasks);
 
   // initalizes the store with tasks based on query
-  const addColumn = useDnDStore((state) => state.addColumn);
-  const addTask = useDnDStore((state) => state.addTask);
+  const addColumn = useMyStore.use.addColumn();
+  const addTask = useMyStore.use.addTask();
+
   useEffect(() => {
     month.forEach((row) =>
       row.forEach((col) => {
