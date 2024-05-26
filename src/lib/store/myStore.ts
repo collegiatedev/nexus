@@ -1,7 +1,7 @@
 import { create, StoreApi, UseBoundStore } from "zustand";
 import { createDnDSlice, DnDSlice } from "./dnd";
 
-// auto-gen selectors for useStore utils
+// utils for auto-generating selectors for useMyStore
 type WithSelectors<S> = S extends { getState: () => infer T }
   ? S & { use: { [K in keyof T]: () => T[K] } }
   : never;
@@ -18,8 +18,8 @@ const createSelectors = <S extends UseBoundStore<StoreApi<object>>>(
 };
 
 // create a store with all slices
-const useBoundStore = create<DnDSlice>()((...a) => ({
+const myStore = create<DnDSlice>()((...a) => ({
   ...createDnDSlice(...a),
 }));
 
-export const useMyStore = createSelectors(useBoundStore);
+export const useMyStore = createSelectors(myStore);
