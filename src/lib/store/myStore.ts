@@ -1,25 +1,30 @@
-import { create, StoreApi, UseBoundStore } from "zustand";
-import { createDnDSlice, DnDSlice } from "./dnd";
+import { create } from "zustand";
+import { createDnDSlice, DnDProps, DnDSlice } from "./dnd";
+import { createContext, useContext } from "react";
 
-// utils for auto-generating selectors for useMyStore
-type WithSelectors<S> = S extends { getState: () => infer T }
-  ? S & { use: { [K in keyof T]: () => T[K] } }
-  : never;
-const createSelectors = <S extends UseBoundStore<StoreApi<object>>>(
-  _store: S,
-) => {
-  let store = _store as WithSelectors<typeof _store>;
-  store.use = {};
-  for (let k of Object.keys(store.getState())) {
-    (store.use as any)[k] = () => store((s) => s[k as keyof typeof s]);
-  }
+type MyStore = ReturnType<typeof createMyStore>;
 
+export const createMyStore = (initialDnD?: Partial<DnDProps>) => {
+  const dndProps = initialDnD || {};
+  return create<DnDSlice>()((...a) => ({
+    ...createDnDSlice(dndProps)(...a),
+  }));
+};
+
+export const StoreContext = createContext<MyStore | null>(null);
+
+export const getStore = (): MyStore => {
+  const store = useContext(StoreContext);
+  if (!store) throw new Error("Missing StoreContext.Provider in the tree");
   return store;
 };
 
-// create a store with all slices
-const myStore = create<DnDSlice>()((...a) => ({
-  ...createDnDSlice(...a),
-}));
+// type BoundStore = ReturnType<typeof useBoundStore>;
 
-export const useMyStore = createSelectors(myStore);
+// const useBoundStore = (bearProps: Partial<BearProps>) => {
+//   return create<BearSlice>()((...a) => ({
+//     ...createBearSlice(bearProps)(...a),
+//   }));
+// };
+
+// export const StoreContext = createContext<BoundStore | null>(null);

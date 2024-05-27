@@ -6,16 +6,18 @@ import { SelectTask } from "~/server/db/schema";
 import { Day } from "./day";
 import { dateAsId } from "~/lib/utils";
 import { DnDBoard } from "./dnd/board";
-import { useMyStore } from "~/lib/store/myStore";
+import { getStore } from "~/lib/store/myStore";
+import { useStore } from "zustand";
 
 // TODO: useSyncExternalStore
 
 export const Month = ({ initTasks }: { initTasks: Array<SelectTask> }) => {
+  const store = getStore();
+
   const month = getMonth(initTasks);
 
-  // initalizes the store with tasks based on query
-  const addColumn = useMyStore.use.addColumn();
-  const addTask = useMyStore.use.addTask();
+  const addColumn = useStore(store, (s) => s.addColumn);
+  const addTask = useStore(store, (s) => s.addTask);
 
   useEffect(() => {
     month.forEach((row) =>

@@ -15,11 +15,12 @@ export type Container = {
   tasks: Task[];
 };
 
-export interface DnDSlice {
-  // data
-  containers: Map<string, Container>; // Using Map for containers
-  tasksRef: Map<string, { index: number; containerId: string }>; // Using Map for tasks
+export interface DnDProps {
+  containers: Map<string, Container>;
+  tasksRef: Map<string, { index: number; containerId: string }>;
+}
 
+export interface DnDSlice extends DnDProps {
   getTasks: (containerId?: string) => Task[];
   getColumns: () => Column[];
 
@@ -36,157 +37,166 @@ export interface DnDSlice {
   // remove is gonna fuck up the indexes
   // might need to just use a tree or somthing decent
 }
-export const createDnDSlice: StateCreator<DnDSlice, [], [], DnDSlice> = (
-  set,
-  get,
-) => ({
-  // data
-  containers: new Map<string, Container>(),
-  tasksRef: new Map<string, { index: number; containerId: string }>(),
 
-  getTasks: (containerId?: string) => {
-    // assumes valid containerId
-    const containers = get().containers;
-    if (!containerId) {
-      const tasks: Task[] = [];
-      containers.forEach((container) => {
-        tasks.concat(container.tasks);
-      });
-      return tasks;
-    }
-    return containers.has(containerId)
-      ? containers.get(containerId)!.tasks
-      : [];
-  },
+// const createDnDSlice: StateCreator<DnDSlice, [], [], DnDSlice>
 
-  getColumns: () => {
-    const columns: Column[] = [];
-    get().containers.forEach((container) => {
-      columns.push(container.column);
-    });
-    return columns;
-  },
+export const createDnDSlice: (
+  initialState: Partial<DnDProps>,
+) => StateCreator<DnDSlice, [], [], DnDSlice> =
+  (initialState: Partial<DnDProps>) => (set, get) => {
+    const DEFAULT_STATE: DnDProps = {
+      containers: new Map<string, Container>(),
+      tasksRef: new Map<string, { index: number; containerId: string }>(),
+    };
 
-  getTask: (id: string) => {
-    const task = get().tasksRef.get(id);
-    if (!task) return undefined;
-    return get().containers.get(task.containerId)!.tasks[task.index];
-  },
-  getColumn: (id: string) => get().containers.get(id)?.column,
-  getContainer: (id: string) => get().containers.get(id),
+    return {
+      ...DEFAULT_STATE,
+      ...initialState,
 
-  addTask: (task) => {
-    const containers = get().containers;
-    if (!containers.has(task.columnId)) {
-      containers.set(task.columnId, {
-        column: { id: task.columnId },
-        tasks: [task],
-      });
-      const tasksRef = get().tasksRef;
-      tasksRef.set(task.id, { index: 0, containerId: task.columnId });
-      set({ containers, tasksRef });
-    } else {
-      const container = containers.get(task.columnId) as Container;
-      // adds task to container, then return new task index
-      const index = container.tasks.push(task) - 1;
-      const tasksRef = get().tasksRef;
-      tasksRef.set(task.id, { index, containerId: task.columnId });
-      set({ containers, tasksRef });
-      //
-    }
-  },
+      getTasks: (containerId?: string) => {
+        // assumes valid containerId
+        const containers = get().containers;
+        if (!containerId) {
+          const tasks: Task[] = [];
+          containers.forEach((container) => {
+            tasks.concat(container.tasks);
+          });
+          return tasks;
+        }
+        return containers.has(containerId)
+          ? containers.get(containerId)!.tasks
+          : [];
+      },
 
-  addColumn: (column) => {
-    const containers = get().containers;
-    if (!containers.has(column.id)) {
-      containers.set(column.id, { column, tasks: [] });
-      set({ containers });
-    }
-  },
+      getColumns: () => {
+        const columns: Column[] = [];
+        get().containers.forEach((container) => {
+          columns.push(container.column);
+        });
+        return columns;
+      },
 
-  addContainer: (container) => {
-    const containers = get().containers;
-    if (!containers.has(container.column.id)) {
-      containers.set(container.column.id, container);
-      const tasksRef = get().tasksRef;
-      container.tasks.forEach((task, index) => {
-        tasksRef.set(task.id, { index, containerId: container.column.id });
-      });
-      set({ containers, tasksRef });
-    }
-  },
+      getTask: (id: string) => {
+        const task = get().tasksRef.get(id);
+        if (!task) return undefined;
+        return get().containers.get(task.containerId)!.tasks[task.index];
+      },
+      getColumn: (id: string) => get().containers.get(id)?.column,
+      getContainer: (id: string) => get().containers.get(id),
 
-  swapTasks: (fromTaskId: string, toTaskId: string) => {
-    // console.log("SWAP TASKS", fromTaskId, toTaskId);
-    const tasksRef = get().tasksRef;
+      addTask: (task) => {
+        const containers = get().containers;
+        if (!containers.has(task.columnId)) {
+          containers.set(task.columnId, {
+            column: { id: task.columnId },
+            tasks: [task],
+          });
+          const tasksRef = get().tasksRef;
+          tasksRef.set(task.id, { index: 0, containerId: task.columnId });
+          set({ containers, tasksRef });
+        } else {
+          const container = containers.get(task.columnId) as Container;
+          // adds task to container, then return new task index
+          const index = container.tasks.push(task) - 1;
+          const tasksRef = get().tasksRef;
+          tasksRef.set(task.id, { index, containerId: task.columnId });
+          set({ containers, tasksRef });
+          //
+        }
+      },
 
-    const fromTaskRef = tasksRef.get(fromTaskId);
-    const toTaskRef = tasksRef.get(toTaskId);
-    if (!fromTaskRef || !toTaskRef) return;
+      addColumn: (column) => {
+        const containers = get().containers;
+        if (!containers.has(column.id)) {
+          containers.set(column.id, { column, tasks: [] });
+          set({ containers });
+        }
+      },
 
-    // move tasks within same container
-    if (fromTaskRef.containerId === toTaskRef.containerId) {
-      // console.log("MOVE TASKS WITHIN SAME CONTAINER");
-      const container = get().containers.get(fromTaskRef.containerId);
-      if (!container) return;
+      addContainer: (container) => {
+        const containers = get().containers;
+        if (!containers.has(container.column.id)) {
+          containers.set(container.column.id, container);
+          const tasksRef = get().tasksRef;
+          container.tasks.forEach((task, index) => {
+            tasksRef.set(task.id, { index, containerId: container.column.id });
+          });
+          set({ containers, tasksRef });
+        }
+      },
 
-      container.tasks = arrayMove(
-        container.tasks,
-        fromTaskRef.index,
-        toTaskRef.index,
-      );
+      swapTasks: (fromTaskId: string, toTaskId: string) => {
+        // console.log("SWAP TASKS", fromTaskId, toTaskId);
+        const tasksRef = get().tasksRef;
 
-      tasksRef.set(fromTaskId, {
-        index: toTaskRef.index,
-        containerId: toTaskRef.containerId,
-      });
-      tasksRef.set(toTaskId, {
-        index: fromTaskRef.index,
-        containerId: fromTaskRef.containerId,
-      });
-      // console.log("here", get());
-      set((state) => ({
-        tasksRef,
-        containers: new Map(state.containers).set(
-          fromTaskRef.containerId,
-          container,
-        ),
-      }));
-      // console.log("here2", get());
-      // move tasks between two containers
-    } else {
-      const fromContainer = get().containers.get(fromTaskRef.containerId);
-      const toContainer = get().containers.get(toTaskRef.containerId);
-      if (!fromContainer || !toContainer) return;
+        const fromTaskRef = tasksRef.get(fromTaskId);
+        const toTaskRef = tasksRef.get(toTaskId);
+        if (!fromTaskRef || !toTaskRef) return;
 
-      const fromTask = get().containers.get(fromTaskRef.containerId)?.tasks[
-        fromTaskRef.index
-      ];
-      const toTask = get().containers.get(toTaskRef.containerId)?.tasks[
-        toTaskRef.index
-      ];
-      if (!fromTask || !toTask) return;
+        // move tasks within same container
+        if (fromTaskRef.containerId === toTaskRef.containerId) {
+          // console.log("MOVE TASKS WITHIN SAME CONTAINER");
+          const container = get().containers.get(fromTaskRef.containerId);
+          if (!container) return;
 
-      fromContainer.tasks.splice(fromTaskRef.index, 1, toTask);
-      toContainer.tasks.splice(toTaskRef.index, 1, fromTask);
+          container.tasks = arrayMove(
+            container.tasks,
+            fromTaskRef.index,
+            toTaskRef.index,
+          );
 
-      const newContainers = new Map(get().containers);
-      newContainers.set(fromTaskRef.containerId, fromContainer);
-      newContainers.set(toTaskRef.containerId, toContainer);
+          tasksRef.set(fromTaskId, {
+            index: toTaskRef.index,
+            containerId: toTaskRef.containerId,
+          });
+          tasksRef.set(toTaskId, {
+            index: fromTaskRef.index,
+            containerId: fromTaskRef.containerId,
+          });
+          // console.log("here", get());
+          set((state) => ({
+            tasksRef,
+            containers: new Map(state.containers).set(
+              fromTaskRef.containerId,
+              container,
+            ),
+          }));
+          // console.log("here2", get());
+          // move tasks between two containers
+        } else {
+          const fromContainer = get().containers.get(fromTaskRef.containerId);
+          const toContainer = get().containers.get(toTaskRef.containerId);
+          if (!fromContainer || !toContainer) return;
 
-      tasksRef.set(fromTaskId, {
-        index: toTaskRef.index,
-        containerId: toTaskRef.containerId,
-      });
-      tasksRef.set(toTaskId, {
-        index: fromTaskRef.index,
-        containerId: fromTaskRef.containerId,
-      });
+          const fromTask = get().containers.get(fromTaskRef.containerId)?.tasks[
+            fromTaskRef.index
+          ];
+          const toTask = get().containers.get(toTaskRef.containerId)?.tasks[
+            toTaskRef.index
+          ];
+          if (!fromTask || !toTask) return;
 
-      set({
-        tasksRef,
-        containers: newContainers,
-      });
-    }
-  },
-});
+          fromContainer.tasks.splice(fromTaskRef.index, 1, toTask);
+          toContainer.tasks.splice(toTaskRef.index, 1, fromTask);
+
+          const newContainers = new Map(get().containers);
+          newContainers.set(fromTaskRef.containerId, fromContainer);
+          newContainers.set(toTaskRef.containerId, toContainer);
+
+          tasksRef.set(fromTaskId, {
+            index: toTaskRef.index,
+            containerId: toTaskRef.containerId,
+          });
+          tasksRef.set(toTaskId, {
+            index: fromTaskRef.index,
+            containerId: fromTaskRef.containerId,
+          });
+
+          set({
+            tasksRef,
+            containers: newContainers,
+          });
+        }
+      },
+    };
+  };

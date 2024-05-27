@@ -1,14 +1,16 @@
 "use client";
 
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
-import { useMyStore } from "~/lib/store/myStore";
-
+import { useStore } from "zustand";
+import { getStore } from "~/lib/store/myStore";
 interface ColumnProps {
   columnId: string;
   children: React.ReactNode;
 }
 export const DroppableColumn = ({ columnId, children }: ColumnProps) => {
-  const tasks = useMyStore((state) => state.getTasks(columnId));
+  const store = getStore();
+
+  const tasks = useStore(store, (s) => s.getTasks(columnId));
   const tasksIds = tasks.map((task) => task.id);
 
   const { setNodeRef } = useSortable({
