@@ -8,13 +8,14 @@ import { dateAsId } from "~/lib/utils";
 import { DnDBoard } from "./dnd/board";
 import { getStore } from "~/lib/store/myStore";
 import { useStore } from "zustand";
+import { MonthTasks } from "./calendar";
 
 // TODO: useSyncExternalStore
-
-export const Month = ({ initTasks }: { initTasks: Array<SelectTask> }) => {
+interface MonthProps {
+  month: MonthTasks;
+}
+export const Month = ({ month }: MonthProps) => {
   const store = getStore();
-
-  const month = getMonth(initTasks);
 
   const addColumn = useStore(store, (s) => s.addColumn);
   const addTask = useStore(store, (s) => s.addTask);

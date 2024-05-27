@@ -16,7 +16,10 @@ export type Container = {
 };
 
 export interface DnDProps {
+  // { columnId: Container }
   containers: Map<string, Container>;
+  // tbh initalization of tasksRef should be done in the store (rather than being passed as a prop)
+  // also, with insertions and lookups, really should be using linkedlists rather than arrays
   tasksRef: Map<string, { index: number; containerId: string }>;
 }
 
