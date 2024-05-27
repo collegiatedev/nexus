@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import {
   DndContext,
@@ -16,16 +18,18 @@ import { getStore } from "~/lib/store/myStore";
 import { useStore } from "zustand";
 
 export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
-  const [draggingTask, setDraggingTask] = useState<Task | null>(null);
+  const [draggingTaskId, setDraggingTaskId] = useState<string | null>(null);
 
   const store = getStore();
+  const getTask = useStore(store, (s) => s.getTask);
   const swapTasks = useStore(store, (s) => s.swapTasks);
 
   // need to wait till client is loaded to access document.body in createPortal
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
     setIsClient(true);
-  }, []);
+    console.log("isClient", isClient);
+  }, [isClient]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -47,7 +51,11 @@ export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
         {isClient &&
           createPortal(
             <DragOverlay>
-              {draggingTask && <DraggableTask task={draggingTask} />}
+              {draggingTaskId &&
+                (() => {
+                  const task = getTask(draggingTaskId);
+                  return task ? <DraggableTask task={task} /> : null;
+                })()}
             </DragOverlay>,
             document.body,
           )}
@@ -57,13 +65,13 @@ export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
 
   function onDragStart(event: DragStartEvent) {
     if (event.active.data.current?.type === "Task") {
-      setDraggingTask(event.active.data.current.task);
+      setDraggingTaskId(event.active.id as string);
       return;
     }
   }
 
   function onDragEnd(_event: DragEndEvent) {
-    setDraggingTask(null);
+    setDraggingTaskId(null);
   }
 
   function onDragOver(event: DragOverEvent) {
