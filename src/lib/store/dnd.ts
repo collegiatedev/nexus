@@ -10,6 +10,12 @@ export type Task = {
   columnId: string;
   name: string;
 };
+export type TaskRef = {
+  index: number;
+  containerId: string;
+};
+
+// uses columnId as key
 export type Container = {
   column: Column;
   tasks: Task[];
@@ -19,8 +25,7 @@ export interface DnDProps {
   // { columnId: Container }
   containers: Map<string, Container>;
   // tbh initalization of tasksRef should be done in the store (rather than being passed as a prop)
-  // also, with insertions and lookups, really should be using linkedlists rather than arrays
-  tasksRef: Map<string, { index: number; containerId: string }>;
+  tasksRef: Map<string, TaskRef>;
 }
 
 export interface DnDSlice extends DnDProps {
@@ -38,10 +43,7 @@ export interface DnDSlice extends DnDProps {
   swapTasks: (fromTaskIndex: string, toTaskIndex: string) => void;
 
   // remove is gonna fuck up the indexes
-  // might need to just use a tree or somthing decent
 }
-
-// const createDnDSlice: StateCreator<DnDSlice, [], [], DnDSlice>
 
 export const createDnDSlice: (
   initialState: Partial<DnDProps>,
@@ -49,7 +51,7 @@ export const createDnDSlice: (
   (initialState: Partial<DnDProps>) => (set, get) => {
     const DEFAULT_STATE: DnDProps = {
       containers: new Map<string, Container>(),
-      tasksRef: new Map<string, { index: number; containerId: string }>(),
+      tasksRef: new Map<string, TaskRef>(),
     };
 
     return {

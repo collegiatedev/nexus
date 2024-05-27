@@ -1,10 +1,8 @@
 import { getMyTasks } from "~/server/queries";
 import { Month } from "./month";
-import { useRef } from "react";
-import { createMyStore, StoreContext } from "~/lib/store/myStore";
-import dayjs from "dayjs";
 import { SelectTask } from "~/server/db/schema";
 import { dateAsId } from "~/lib/utils";
+import { Container, DnDProps, TaskRef } from "~/lib/store/dnd";
 
 export const dynamic = "force-dynamic";
 
@@ -16,54 +14,34 @@ export type MonthTasks = Array<Array<DayTasks>>;
 
 export const Calendar = async () => {
   const myTasks = await getMyTasks();
-  const daysMatrix = getMonth(myTasks);
+  const initStore = formatStoreProps(myTasks);
 
-  // TODO:
-  const initStore = {};
-
-  const store = useRef(createMyStore(initStore)).current;
-
-  return (
-    <StoreContext.Provider value={store}>
-      <Month month={daysMatrix} />;
-    </StoreContext.Provider>
-  );
+  return <Month initStore={initStore} />;
 };
 
-// create a matrix of days in a month, populate it with tasks
-// assume tasks query is sorted by dueDate, and first element starts on the same month
-const getMonth = (monthlyTasks: Array<SelectTask>, month = dayjs().month()) => {
-  month = Math.floor(month);
-  const year = dayjs().year();
-  const firstDayOfTheMonth = dayjs(new Date(year, month, 1)).day();
-  let currentMonthCount = 0 - firstDayOfTheMonth;
+const formatStoreProps = (tasks: Array<SelectTask>): DnDProps => {
+  const containers = new Map<string, Container>();
+  const tasksRef = new Map<string, TaskRef>();
 
-  let taskPointer = 0;
+  tasks.forEach((task) => {
+    if (task.dueDate) {
+      const columnId = dateAsId(task.dueDate);
 
-  const daysMatrix = new Array(5).fill([]).map(() => {
-    return new Array(7).fill(null).map(() => {
-      currentMonthCount++;
-      const date = dayjs(new Date(year, month, currentMonthCount));
-
-      const columnId = dateAsId(date.toDate());
-
-      // populate a particular day with tasks by iterating over monthlyTasks
-      const currentTasks: Array<SelectTask> = [];
-      while (
-        taskPointer < monthlyTasks.length &&
-        date.isSame(monthlyTasks[taskPointer]?.dueDate, "day")
-      ) {
-        currentTasks.push(monthlyTasks[taskPointer] as SelectTask);
-        taskPointer++;
+      if (!containers.has(columnId)) {
+        containers.set(columnId, {
+          column: { id: columnId, date: task.dueDate },
+          tasks: [],
+        });
       }
 
-      const dayTask: DayTasks = {
-        date: date.toDate(),
-        tasks: currentTasks,
-      };
-
-      return dayTask;
-    });
+      const index = containers.get(columnId)!.tasks.length;
+      containers.get(columnId)!.tasks.push({
+        id: task.id.toString(),
+        columnId,
+        name: task.name as string,
+      });
+      tasksRef.set(task.id.toString(), { index, containerId: columnId });
+    }
   });
-  return daysMatrix as MonthTasks;
+  return { containers, tasksRef };
 };
