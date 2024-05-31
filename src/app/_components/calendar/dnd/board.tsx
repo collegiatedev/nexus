@@ -18,13 +18,14 @@ import { useMyStore } from "~/lib/store/provider";
 export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
   const [draggingTaskId, setDraggingTaskId] = useState<string | null>(null);
 
-  const { getTask, swapTasks, moveToColumn } = useMyStore((state) => state);
+  const { getTask, moveTask, moveTaskIntoColumn } = useMyStore(
+    (state) => state,
+  );
 
   // need to wait till client is loaded to access document.body in createPortal
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
     setIsClient(true);
-    console.log("isClient", isClient);
   }, [isClient]);
 
   const sensors = useSensors(
@@ -71,6 +72,7 @@ export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
   }
 
   function onDragOver(event: DragOverEvent) {
+    console.log(event);
     const { active, over } = event;
     if (!over) return;
 
@@ -79,20 +81,8 @@ export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
     const isActiveATask = active.data.current?.type === "Task";
 
     if (activeId === overId || !isActiveATask) return;
-
-    console.log("activeId", activeId, "overId", overId);
-    console.log("a", over.data.current?.type);
-
     const isOverType = over.data.current?.type;
-
-    console.log("here");
-    if (isOverType === "Task") {
-      // setDraggingTaskId(null);
-    } else {
-      console.log(`moving task ${activeId} to column ${overId}`);
-      moveToColumn(activeId.toString(), overId.toString());
-    }
-
-    // swapTasks(activeId.toString(), overId.toString());
+    if (isOverType === "Task") moveTask(activeId.toString(), overId.toString());
+    else moveTaskIntoColumn(activeId.toString(), overId.toString()); // overId is a columnId
   }
 };

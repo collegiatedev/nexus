@@ -70,7 +70,6 @@ const DayTitle = ({
 const DayTasks = ({ columnId }: { columnId: string }) => {
   const { getTasks } = useMyStore((state) => state);
   const tasks = getTasks(columnId);
-  console.log("t", tasks);
 
   return (
     <DroppableColumn columnId={columnId}>

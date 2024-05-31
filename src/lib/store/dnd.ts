@@ -41,9 +41,11 @@ export interface DnDSlice extends DnDProps {
   addContainer: (container: Container) => void;
 
   // move task to end of the new column array
-  moveToColumn: (taskId: string, columnId: string) => void;
-
-  swapTasks: (fromTaskIndex: string, toTaskIndex: string) => void;
+  moveTaskIntoColumn: (taskId: string, columnId: string) => void;
+  // swap tasks within the same column
+  swapTasksInColumn: (fromTaskIndex: string, toTaskIndex: string) => void;
+  // move a task to new container, generalized case
+  moveTask: (fromTaskId: string, toTaskId: string) => void;
 
   // remove is gonna fuck up the indexes
 }
@@ -125,7 +127,6 @@ export const createDnDSlice: (
 
       addContainer: (container) => {
         const newContainers = new Map<string, Container>(get().containers);
-
         if (!newContainers.has(container.column.id)) {
           newContainers.set(container.column.id, container);
           const newTasksRef = new Map<string, TaskRef>(get().tasksRef);
@@ -139,7 +140,7 @@ export const createDnDSlice: (
         }
       },
 
-      moveToColumn: (taskId: string, columnId: string) => {
+      moveTaskIntoColumn: (taskId: string, columnId: string) => {
         const newTasksRef = new Map<string, TaskRef>(get().tasksRef);
         const moveTaskRef = newTasksRef.get(taskId);
         if (!moveTaskRef) return;
@@ -178,17 +179,15 @@ export const createDnDSlice: (
         set({ tasksRef: newTasksRef, containers: newContainers });
       },
 
-      swapTasks: (fromTaskId: string, toTaskId: string) => {
-        // console.log("SWAP TASKS", fromTaskId, toTaskId);
-        const tasksRef = get().tasksRef;
-
-        const fromTaskRef = tasksRef.get(fromTaskId);
-        const toTaskRef = tasksRef.get(toTaskId);
+      swapTasksInColumn: (fromTaskId: string, toTaskId: string) => {
+        const newTasksRef = new Map<string, TaskRef>(get().tasksRef);
+        const fromTaskRef = newTasksRef.get(fromTaskId);
+        const toTaskRef = newTasksRef.get(toTaskId);
         if (!fromTaskRef || !toTaskRef) return;
 
-        // move tasks within same container
+        // check tasks are within same column
         if (fromTaskRef.containerId === toTaskRef.containerId) {
-          // console.log("MOVE TASKS WITHIN SAME CONTAINER");
+          const newContainers = new Map<string, Container>(get().containers);
           const container = get().containers.get(fromTaskRef.containerId);
           if (!container) return;
 
@@ -198,57 +197,31 @@ export const createDnDSlice: (
             toTaskRef.index,
           );
 
-          tasksRef.set(fromTaskId, {
+          newTasksRef.set(fromTaskId, {
             index: toTaskRef.index,
             containerId: toTaskRef.containerId,
           });
-          tasksRef.set(toTaskId, {
+          newTasksRef.set(toTaskId, {
             index: fromTaskRef.index,
             containerId: fromTaskRef.containerId,
           });
-          // console.log("here", get());
-          set((state) => ({
-            tasksRef,
-            containers: new Map(state.containers).set(
-              fromTaskRef.containerId,
-              container,
-            ),
-          }));
-          // console.log("here2", get());
-          // move tasks between two containers
+          newContainers.set(fromTaskRef.containerId, container);
+
+          set({ tasksRef: newTasksRef, containers: newContainers });
+        }
+      },
+
+      moveTask: (fromTaskId: string, toTaskId: string) => {
+        const newTasksRef = new Map<string, TaskRef>(get().tasksRef);
+        const fromTaskRef = newTasksRef.get(fromTaskId);
+        const toTaskRef = newTasksRef.get(toTaskId);
+        if (!fromTaskRef || !toTaskRef) return;
+
+        if (fromTaskRef.containerId === toTaskRef.containerId) {
+          get().swapTasksInColumn(fromTaskId, toTaskId);
         } else {
-          const fromContainer = get().containers.get(fromTaskRef.containerId);
-          const toContainer = get().containers.get(toTaskRef.containerId);
-          if (!fromContainer || !toContainer) return;
-
-          const fromTask = get().containers.get(fromTaskRef.containerId)?.tasks[
-            fromTaskRef.index
-          ];
-          const toTask = get().containers.get(toTaskRef.containerId)?.tasks[
-            toTaskRef.index
-          ];
-          if (!fromTask || !toTask) return;
-
-          fromContainer.tasks.splice(fromTaskRef.index, 1, toTask);
-          toContainer.tasks.splice(toTaskRef.index, 1, fromTask);
-
-          const newContainers = new Map(get().containers);
-          newContainers.set(fromTaskRef.containerId, fromContainer);
-          newContainers.set(toTaskRef.containerId, toContainer);
-
-          tasksRef.set(fromTaskId, {
-            index: toTaskRef.index,
-            containerId: toTaskRef.containerId,
-          });
-          tasksRef.set(toTaskId, {
-            index: fromTaskRef.index,
-            containerId: fromTaskRef.containerId,
-          });
-
-          set({
-            tasksRef,
-            containers: newContainers,
-          });
+          get().moveTaskIntoColumn(fromTaskId, toTaskRef.containerId);
+          get().swapTasksInColumn(fromTaskId, toTaskId);
         }
       },
     };

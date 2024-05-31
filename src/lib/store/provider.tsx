@@ -1,3 +1,5 @@
+"use client";
+
 import { create, useStore } from "zustand";
 import { createDnDSlice, DnDProps, DnDSlice } from "./dnd";
 import { createContext, ReactNode, useRef, useContext } from "react";
