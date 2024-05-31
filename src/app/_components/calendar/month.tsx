@@ -5,44 +5,34 @@ import dayjs from "dayjs";
 import { Day } from "./day";
 import { dateAsId } from "~/lib/utils";
 import { DnDBoard } from "./dnd/board";
-import { createMyStore, StoreContext } from "~/lib/store/myStore";
 import { DnDProps } from "~/lib/store/dnd";
-import { useStore } from "zustand";
+import { MyStoreProvider, useMyStore } from "~/lib/store/provider";
 
 // TODO: useSyncExternalStore
 interface MonthProps {
-  initStore: Partial<DnDProps>;
   whichMonth?: number;
 }
-export const Month = ({
-  initStore,
-  whichMonth = dayjs().month(),
-}: MonthProps) => {
-  const store = useRef(createMyStore(initStore)).current;
+export const Month = ({ whichMonth = dayjs().month() }: MonthProps) => {
+  const { getColumn, addColumn } = useMyStore((state) => state);
   const month = getMonth(whichMonth);
 
-  const getColumn = useStore(store, (s) => s.getColumn);
-  const addColumn = useStore(store, (s) => s.addColumn);
-
   return (
-    <StoreContext.Provider value={store}>
-      <DnDBoard>
-        <div className="grid min-h-[90%] flex-1 grid-cols-7 grid-rows-5">
-          {month.map((row, i) => (
-            <React.Fragment key={i}>
-              {row.map((day, idx) => {
-                const dayId = dateAsId(day.toDate());
-                // initalize any missing days (has no tasks)
-                if (!getColumn(dayId))
-                  addColumn({ id: dayId, date: day.toDate() });
+    <DnDBoard>
+      <div className="grid min-h-[90%] flex-1 grid-cols-7 grid-rows-5">
+        {month.map((row, i) => (
+          <React.Fragment key={i}>
+            {row.map((day, idx) => {
+              const dayId = dateAsId(day.toDate());
+              // initalize any missing days (has no tasks)
+              if (!getColumn(dayId))
+                addColumn({ id: dayId, date: day.toDate() });
 
-                return <Day dayId={dayId} key={idx} />;
-              })}
-            </React.Fragment>
-          ))}
-        </div>
-      </DnDBoard>
-    </StoreContext.Provider>
+              return <Day dayId={dayId} key={idx} />;
+            })}
+          </React.Fragment>
+        ))}
+      </div>
+    </DnDBoard>
   );
 };
 

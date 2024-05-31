@@ -40,6 +40,9 @@ export interface DnDSlice extends DnDProps {
   addColumn: (column: Column) => void;
   addContainer: (container: Container) => void;
 
+  // move task to end of the new column array
+  moveToColumn: (taskId: string, columnId: string) => void;
+
   swapTasks: (fromTaskIndex: string, toTaskIndex: string) => void;
 
   // remove is gonna fuck up the indexes
@@ -80,7 +83,6 @@ export const createDnDSlice: (
         });
         return columns;
       },
-
       getTask: (id: string) => {
         const task = get().tasksRef.get(id);
         if (!task) return undefined;
@@ -90,44 +92,90 @@ export const createDnDSlice: (
       getContainer: (id: string) => get().containers.get(id),
 
       addTask: (task) => {
-        const containers = get().containers;
-        if (!containers.has(task.columnId)) {
-          containers.set(task.columnId, {
+        const newContainers = new Map<string, Container>(get().containers);
+        if (!newContainers.has(task.columnId)) {
+          newContainers.set(task.columnId, {
             column: { id: task.columnId },
             tasks: [task],
           });
-          const tasksRef = get().tasksRef;
-          tasksRef.set(task.id, { index: 0, containerId: task.columnId });
-          set({ containers, tasksRef });
+
+          // const newContainers = new Map<string, Container>(containers);
+          const newTasksRef = new Map<string, TaskRef>(get().tasksRef);
+          newTasksRef.set(task.id, { index: 0, containerId: task.columnId });
+
+          set({ containers: newContainers, tasksRef: newTasksRef });
         } else {
-          const container = containers.get(task.columnId) as Container;
+          const container = newContainers.get(task.columnId) as Container;
           // adds task to container, then return new task index
           const index = container.tasks.push(task) - 1;
-          const tasksRef = get().tasksRef;
-          tasksRef.set(task.id, { index, containerId: task.columnId });
-          set({ containers, tasksRef });
-          //
+          const newTasksRef = new Map<string, TaskRef>(get().tasksRef);
+
+          newTasksRef.set(task.id, { index, containerId: task.columnId });
+          set({ containers: newContainers, tasksRef: newTasksRef });
         }
       },
 
       addColumn: (column) => {
-        const containers = get().containers;
-        if (!containers.has(column.id)) {
-          containers.set(column.id, { column, tasks: [] });
-          set({ containers });
+        const newContainers = new Map<string, Container>(get().containers);
+        if (!newContainers.has(column.id)) {
+          newContainers.set(column.id, { column, tasks: [] });
+          set({ containers: newContainers });
         }
       },
 
       addContainer: (container) => {
-        const containers = get().containers;
-        if (!containers.has(container.column.id)) {
-          containers.set(container.column.id, container);
-          const tasksRef = get().tasksRef;
+        const newContainers = new Map<string, Container>(get().containers);
+
+        if (!newContainers.has(container.column.id)) {
+          newContainers.set(container.column.id, container);
+          const newTasksRef = new Map<string, TaskRef>(get().tasksRef);
           container.tasks.forEach((task, index) => {
-            tasksRef.set(task.id, { index, containerId: container.column.id });
+            newTasksRef.set(task.id, {
+              index,
+              containerId: container.column.id,
+            });
           });
-          set({ containers, tasksRef });
+          set({ containers: newContainers, tasksRef: newTasksRef });
         }
+      },
+
+      moveToColumn: (taskId: string, columnId: string) => {
+        const newTasksRef = new Map<string, TaskRef>(get().tasksRef);
+        const moveTaskRef = newTasksRef.get(taskId);
+        if (!moveTaskRef) return;
+
+        const moveTask = get().containers.get(moveTaskRef.containerId)?.tasks[
+          moveTaskRef.index
+        ];
+        if (!moveTask) return;
+
+        const newContainers = new Map<string, Container>(get().containers);
+
+        const startContainer = newContainers.get(moveTaskRef.containerId);
+        const destContainer = newContainers.get(columnId);
+        if (!startContainer || !destContainer) return;
+
+        // remove from current column, update taskRefs
+        // remove task from container
+        startContainer.tasks.splice(moveTaskRef.index, 1);
+        // update taskRef indexes post task removal
+        for (let i = moveTaskRef.index; i < startContainer.tasks.length; i++) {
+          const task = startContainer.tasks[i];
+          if (!task) continue;
+          newTasksRef.set(task.id, {
+            index: i,
+            containerId: startContainer.column.id,
+          });
+        }
+
+        const destIndex = destContainer.tasks.length;
+        destContainer.tasks.push({ ...moveTask, columnId: columnId });
+        newTasksRef.set(moveTask.id, {
+          index: destIndex,
+          containerId: columnId,
+        });
+
+        set({ tasksRef: newTasksRef, containers: newContainers });
       },
 
       swapTasks: (fromTaskId: string, toTaskId: string) => {

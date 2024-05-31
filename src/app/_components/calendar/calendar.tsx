@@ -3,6 +3,7 @@ import { Month } from "./month";
 import { SelectTask } from "~/server/db/schema";
 import { dateAsId } from "~/lib/utils";
 import { Container, DnDProps, TaskRef } from "~/lib/store/dnd";
+import { MyStoreProvider } from "~/lib/store/provider";
 
 export const dynamic = "force-dynamic";
 
@@ -16,9 +17,15 @@ export const Calendar = async () => {
   const myTasks = await getMyTasks();
   const initStore = formatStoreProps(myTasks);
 
-  return <Month initStore={initStore} />;
+  return (
+    <MyStoreProvider params={initStore}>
+      <Month initStore={initStore} />
+    </MyStoreProvider>
+  );
 };
 
+// tasksRef logic really shouldn't be handled by consumer
+// in refractor, this should be handled by class initializer
 const formatStoreProps = (tasks: Array<SelectTask>): DnDProps => {
   const containers = new Map<string, Container>();
   const tasksRef = new Map<string, TaskRef>();

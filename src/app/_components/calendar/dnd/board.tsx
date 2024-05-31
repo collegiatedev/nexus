@@ -13,16 +13,12 @@ import {
 } from "@dnd-kit/core";
 import { createPortal } from "react-dom";
 import { DraggableTask } from "./task";
-import { Task } from "~/lib/store/dnd";
-import { getStore } from "~/lib/store/myStore";
-import { useStore } from "zustand";
+import { useMyStore } from "~/lib/store/provider";
 
 export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
   const [draggingTaskId, setDraggingTaskId] = useState<string | null>(null);
 
-  const store = getStore();
-  const getTask = useStore(store, (s) => s.getTask);
-  const swapTasks = useStore(store, (s) => s.swapTasks);
+  const { getTask, swapTasks, moveToColumn } = useMyStore((state) => state);
 
   // need to wait till client is loaded to access document.body in createPortal
   const [isClient, setIsClient] = useState(false);
@@ -80,14 +76,23 @@ export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
 
     const activeId = active.id;
     const overId = over.id;
-
-    if (activeId === overId) return;
-
     const isActiveATask = active.data.current?.type === "Task";
-    const isOverATask = over.data.current?.type === "Task";
 
-    if (!isActiveATask || !isOverATask) return;
+    if (activeId === overId || !isActiveATask) return;
 
-    swapTasks(activeId.toString(), overId.toString());
+    console.log("activeId", activeId, "overId", overId);
+    console.log("a", over.data.current?.type);
+
+    const isOverType = over.data.current?.type;
+
+    console.log("here");
+    if (isOverType === "Task") {
+      // setDraggingTaskId(null);
+    } else {
+      console.log(`moving task ${activeId} to column ${overId}`);
+      moveToColumn(activeId.toString(), overId.toString());
+    }
+
+    // swapTasks(activeId.toString(), overId.toString());
   }
 };

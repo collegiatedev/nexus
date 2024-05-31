@@ -5,17 +5,12 @@ import clsx from "clsx";
 import React from "react";
 import { DraggableTask } from "./dnd/task";
 import { DroppableColumn } from "./dnd/column";
-
-import { Task } from "~/lib/store/dnd";
-import { getStore } from "~/lib/store/myStore";
 import { useStore } from "zustand";
+import { useMyStore } from "~/lib/store/provider";
 
 export const Day = ({ dayId }: { dayId: string }) => {
-  const store = getStore();
-
-  const getTasks = useStore(store, (s) => s.getTasks);
-  const dayContainer = useStore(store, (s) => s.getContainer(dayId));
-
+  const { getContainer } = useMyStore((state) => state);
+  const dayContainer = getContainer(dayId);
   if (!dayContainer) return;
 
   // const [isHovered, setIsHovered] = useState(false);
@@ -33,7 +28,7 @@ export const Day = ({ dayId }: { dayId: string }) => {
         date={dayContainer.column.date!}
         // showAddButton={isHovered}
       />
-      <DayTasks columnId={columnId} tasks={getTasks(columnId)} />
+      <DayTasks columnId={columnId} />
     </div>
   );
 };
@@ -73,13 +68,11 @@ const DayTitle = ({
   );
 };
 
-const DayTasks = ({
-  columnId,
-  tasks,
-}: {
-  columnId: string;
-  tasks: Array<Task>;
-}) => {
+const DayTasks = ({ columnId }: { columnId: string }) => {
+  const { getTasks } = useMyStore((state) => state);
+  const tasks = getTasks(columnId);
+  console.log("t", tasks);
+
   return (
     <DroppableColumn columnId={columnId}>
       {tasks.map((task) => {
