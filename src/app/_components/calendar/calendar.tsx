@@ -19,7 +19,7 @@ export const Calendar = async () => {
 
   return (
     <MyStoreProvider params={initStore}>
-      <Month initStore={initStore} />
+      <Month />
     </MyStoreProvider>
   );
 };

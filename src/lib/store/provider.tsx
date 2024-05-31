@@ -1,16 +1,20 @@
-"use client";
+import { create, useStore } from "zustand";
+import { createDnDSlice, DnDProps, DnDSlice } from "./dnd";
+import { createContext, ReactNode, useRef, useContext } from "react";
 
-import { type ReactNode, createContext, useRef, useContext } from "react";
-import { useStore } from "zustand";
-import {
-  type MyStore,
-  type CreateMyStoreReturn,
-  createMyStore,
-} from "./myStore";
-import { DnDProps } from "./dnd";
+type AllSlices = DnDSlice; // extend this def using unions: DnDSlice | OtherSlice
 
-export const MyStoreContext = createContext<CreateMyStoreReturn | null>(null);
+// add to args as needed
+export const createMyStore = (initialDnD?: DnDProps) => {
+  const dndProps = initialDnD || {};
+  return create<AllSlices>()((...a) => ({
+    ...createDnDSlice(dndProps)(...a),
+  }));
+};
 
+type CreateMyStoreReturn = ReturnType<typeof createMyStore>;
+
+const MyStoreContext = createContext<CreateMyStoreReturn | null>(null);
 export const MyStoreProvider = ({
   children,
   params,
@@ -28,7 +32,7 @@ export const MyStoreProvider = ({
   );
 };
 
-export const useMyStore = <T,>(selector: (store: MyStore) => T): T => {
+export const useMyStore = <T,>(selector: (store: AllSlices) => T): T => {
   const myStoreContext = useContext(MyStoreContext);
 
   if (!myStoreContext) {

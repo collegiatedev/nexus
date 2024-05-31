@@ -5,7 +5,6 @@ import clsx from "clsx";
 import React from "react";
 import { DraggableTask } from "./dnd/task";
 import { DroppableColumn } from "./dnd/column";
-import { useStore } from "zustand";
 import { useMyStore } from "~/lib/store/provider";
 
 export const Day = ({ dayId }: { dayId: string }) => {

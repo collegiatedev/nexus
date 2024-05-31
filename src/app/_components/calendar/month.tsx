@@ -5,8 +5,7 @@ import dayjs from "dayjs";
 import { Day } from "./day";
 import { dateAsId } from "~/lib/utils";
 import { DnDBoard } from "./dnd/board";
-import { DnDProps } from "~/lib/store/dnd";
-import { MyStoreProvider, useMyStore } from "~/lib/store/provider";
+import { useMyStore } from "~/lib/store/provider";
 
 // TODO: useSyncExternalStore
 interface MonthProps {
