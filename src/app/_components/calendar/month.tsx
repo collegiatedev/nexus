@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { use, useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
 import { Day } from "./day";
 import { dateAsId } from "~/lib/utils";
@@ -10,24 +10,34 @@ import { useMyStore } from "~/lib/store/provider";
 interface MonthProps {
   whichMonth?: number;
 }
+// optimize me :(
 export const Month = ({ whichMonth = dayjs().month() }: MonthProps) => {
-  const { getColumn, addColumn } = useMyStore((state) => state);
   const month = getMonth(whichMonth);
 
+  // initialize missing days in store (days without tasks)
+  const [isReady, setIsReady] = useState(false);
+  const { getColumn, addColumn } = useMyStore((state) => state);
+  useEffect(() => {
+    month.forEach((week) =>
+      week.forEach((day) => {
+        const dayId = dateAsId(day.toDate());
+        if (!getColumn(dayId)) addColumn({ id: dayId, date: day.toDate() });
+      }),
+    );
+    setIsReady(true);
+  }, []);
+
+  // use skeleton in future
+  if (!isReady) return <div>Loading...</div>;
   return (
     <DnDBoard>
-      <div className="grid min-h-[90%] flex-1 grid-cols-7 grid-rows-5">
+      <div className="grid min-h-[90%] flex-1 grid-rows-5">
         {month.map((row, i) => (
-          <React.Fragment key={i}>
-            {row.map((day, idx) => {
-              const dayId = dateAsId(day.toDate());
-              // initalize any missing days (has no tasks)
-              if (!getColumn(dayId))
-                addColumn({ id: dayId, date: day.toDate() });
-
-              return <Day dayId={dayId} key={idx} />;
-            })}
-          </React.Fragment>
+          <div className="grid h-auto grid-cols-7" key={i}>
+            {row.map((day, idx) => (
+              <Day dayId={dateAsId(day.toDate())} key={idx} />
+            ))}
+          </div>
         ))}
       </div>
     </DnDBoard>

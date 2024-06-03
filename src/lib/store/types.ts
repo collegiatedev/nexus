@@ -124,7 +124,7 @@ export class DnDHandler {
   };
   // adds task to the end of the column
   addTaskIntoColumn = (taskId: string, columnId: string) => {
-    console.log("--start addTaskIntoColumn");
+    // console.log("--start addTaskIntoColumn");
     const fromTaskRef = this.tasksRef.get(taskId);
     if (!fromTaskRef) return;
 

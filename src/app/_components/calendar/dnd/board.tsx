@@ -59,7 +59,7 @@ export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
       if (activeId === overId || !isActiveATask) return;
 
       const here = getTask(activeId.toString());
-      console.log("-> premove", here?.id, here?.columnId);
+      // console.log("-> premove", here?.id, here?.columnId);
 
       const activeTask = getTask(activeId.toString());
       const isOverType = over.data.current?.type;
@@ -76,9 +76,9 @@ export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
 
       if (isOverType === "Task") {
         const here = getTask(overId.toString());
-        console.log("<- postmove Task", here?.id, here?.columnId);
+        // console.log("<- postmove Task", here?.id, here?.columnId);
       } else {
-        console.log("<-postmove Column");
+        // console.log("<-postmove Column");
       }
     },
     [swapTasksWithinColumn, insertTaskIntoColumn, addTaskIntoColumn, getTask],

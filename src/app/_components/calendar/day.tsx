@@ -18,7 +18,7 @@ export const Day = ({ dayId }: { dayId: string }) => {
   const columnId = dayContainer.column.id;
   return (
     <div
-      className="relative flex h-full w-full flex-col items-center border"
+      className="relative flex h-auto w-full flex-col items-center border"
       // onMouseEnter={handleMouseEnter}
       // onMouseLeave={handleMouseLeave}
     >
