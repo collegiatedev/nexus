@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useRef } from "react";
+import React from "react";
 import dayjs from "dayjs";
 import { Day } from "./day";
 import { dateAsId } from "~/lib/utils";
 import { DnDBoard } from "./dnd/board";
 import { useMyStore } from "~/lib/store/provider";
 
-// TODO: useSyncExternalStore
 interface MonthProps {
   whichMonth?: number;
 }

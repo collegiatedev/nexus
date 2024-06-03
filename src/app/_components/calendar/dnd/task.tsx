@@ -2,7 +2,7 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Task } from "~/lib/store/dnd";
+import { type Task } from "~/lib/store/types";
 
 export const DraggableTask = ({ task }: { task: Task }) => {
   const {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   DndContext,
   DragEndEvent,
@@ -18,15 +18,14 @@ import { useMyStore } from "~/lib/store/provider";
 export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
   const [draggingTaskId, setDraggingTaskId] = useState<string | null>(null);
 
-  const { getTask, moveTask, moveTaskIntoColumn } = useMyStore(
+  const { getTask, moveTask, moveTaskIntoColumn, getColumn } = useMyStore(
     (state) => state,
   );
 
-  // need to wait till client is loaded to access document.body in createPortal
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
     setIsClient(true);
-  }, [isClient]);
+  }, []); // Correct dependency array
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -34,6 +33,44 @@ export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
         distance: 10,
       },
     }),
+  );
+
+  const onDragStart = useCallback((event: DragStartEvent) => {
+    if (event.active.data.current?.type === "Task") {
+      setDraggingTaskId(event.active.id as string);
+    }
+  }, []);
+
+  const onDragEnd = useCallback((_event: DragEndEvent) => {
+    setDraggingTaskId(null);
+  }, []);
+
+  const onDragOver = useCallback(
+    (event: DragOverEvent) => {
+      const { active, over } = event;
+      if (!over) return;
+
+      const activeId = active.id;
+      const overId = over.id;
+      const isActiveATask = active.data.current?.type === "Task";
+      if (activeId === overId || !isActiveATask) return;
+
+      const here = getTask(activeId.toString());
+      console.log("-> premove", here?.id, here?.columnId);
+
+      const isOverType = over.data.current?.type;
+      if (isOverType === "Task")
+        moveTask(activeId.toString(), overId.toString());
+      else moveTaskIntoColumn(activeId.toString(), overId.toString()); // overId is a columnId
+
+      if (isOverType === "Task") {
+        const here = getTask(overId.toString());
+        console.log("<- postmove Task", here?.id, here?.columnId);
+      } else {
+        console.log("<-postmove Column");
+      }
+    },
+    [moveTask, moveTaskIntoColumn],
   );
 
   return (
@@ -59,30 +96,4 @@ export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
       </DndContext>
     </div>
   );
-
-  function onDragStart(event: DragStartEvent) {
-    if (event.active.data.current?.type === "Task") {
-      setDraggingTaskId(event.active.id as string);
-      return;
-    }
-  }
-
-  function onDragEnd(_event: DragEndEvent) {
-    setDraggingTaskId(null);
-  }
-
-  function onDragOver(event: DragOverEvent) {
-    console.log(event);
-    const { active, over } = event;
-    if (!over) return;
-
-    const activeId = active.id;
-    const overId = over.id;
-    const isActiveATask = active.data.current?.type === "Task";
-
-    if (activeId === overId || !isActiveATask) return;
-    const isOverType = over.data.current?.type;
-    if (isOverType === "Task") moveTask(activeId.toString(), overId.toString());
-    else moveTaskIntoColumn(activeId.toString(), overId.toString()); // overId is a columnId
-  }
 };

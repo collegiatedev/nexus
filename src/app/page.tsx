@@ -1,6 +1,5 @@
 // import { Navbar } from "./_components/_calendar/navbar";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
-import { getMyTasks } from "~/server/queries";
 import { Calendar } from "./_components/calendar/calendar";
 
 export default async function Home() {
