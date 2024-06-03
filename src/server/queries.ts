@@ -18,6 +18,9 @@ export const getMyTasks = userAuth(async (authContext) => {
 
 export const updateTaskDueDate = userAuth(
   async (_, taskId: number, newDueDate: Date) => {
-    db.update(tasks).set({ dueDate: newDueDate }).where(eq(tasks.id, taskId));
+    await db
+      .update(tasks)
+      .set({ dueDate: newDueDate })
+      .where(eq(tasks.id, taskId));
   },
 );

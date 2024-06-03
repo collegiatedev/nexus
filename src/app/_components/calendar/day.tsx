@@ -2,7 +2,7 @@
 
 import dayjs from "dayjs";
 import clsx from "clsx";
-import React, { memo } from "react";
+import React from "react";
 import { DraggableTask } from "./dnd/task";
 import { DroppableColumn } from "./dnd/column";
 import { useMyStore } from "~/lib/store/provider";
@@ -18,7 +18,7 @@ export const Day = ({ dayId }: { dayId: string }) => {
   const columnId = dayContainer.column.id;
   return (
     <div
-      className="relative flex h-auto w-full flex-col items-center border"
+      className="relative flex h-auto min-h-[100px] w-full flex-col items-center border"
       // onMouseEnter={handleMouseEnter}
       // onMouseLeave={handleMouseLeave}
     >
