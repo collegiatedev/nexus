@@ -124,7 +124,6 @@ export class DnDHandler {
   };
   // adds task to the end of the column
   addTaskIntoColumn = (taskId: string, columnId: string) => {
-    // console.log("--start addTaskIntoColumn");
     const fromTaskRef = this.tasksRef.get(taskId);
     if (!fromTaskRef) return;
 
@@ -156,12 +155,9 @@ export class DnDHandler {
       index: toIndex,
       containerId: columnId,
     });
-
-    console.log("--finish addTaskIntoColumn");
   };
   // swaps taskswithin the same column
   swapTasksWithinColumn = (fromTaskId: string, toTaskId: string) => {
-    console.log("--start swapTasksWithinColumn");
     const fromTaskRef = this.tasksRef.get(fromTaskId);
     const toTaskRef = this.tasksRef.get(toTaskId);
     if (!fromTaskRef || !toTaskRef) return;
@@ -187,12 +183,9 @@ export class DnDHandler {
       });
       this.containers.set(fromTaskRef.containerId, container);
     }
-
-    console.log("--finish swapTasksWithinColumn");
   };
   // inserts fromTask into new column, after toTask
   insertTaskIntoColumn = (fromTaskId: string, toTaskId: string) => {
-    console.log("--start insertTaskIntoColumn");
     const fromTaskRef = this.tasksRef.get(fromTaskId);
     const toTaskRef = this.tasksRef.get(toTaskId);
     if (!fromTaskRef || !toTaskRef) return;
@@ -234,6 +227,5 @@ export class DnDHandler {
         containerId: toContainer.column.id,
       });
     }
-    console.log("--finish insertTaskIntoColumn");
   };
 }
