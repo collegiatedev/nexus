@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* DO NOT DELETE THIS LINE - BAD STUFF WILL HAPPEN IF YOU DO */
+.grid-rows-5 {
+  display: grid;
+  grid-template-rows: repeat(5, auto);
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -73,9 +79,4 @@
   body {
     @apply bg-background text-foreground;
   }
-}
-
-.grid-rows-5 {
-  display: grid;
-  grid-template-rows: repeat(5, auto);
 }
