@@ -21,8 +21,8 @@ export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
   // const [draggingTaskId, setDraggingTaskId] = useState<string | null>(null);
 
   const draggingTaskId = useRef<string | null>(null); // useRef is used to avoid re-render, access value in
-
   const {
+    setHoveringContainer,
     getTask,
     addTaskIntoColumn,
     swapTasksWithinColumn,
@@ -43,6 +43,7 @@ export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
   );
 
   const onDragStart = useCallback((event: DragStartEvent) => {
+    setHoveringContainer(null);
     if (event.active.data.current?.type === "Task") {
       draggingTaskId.current = event.active.id as string;
     }

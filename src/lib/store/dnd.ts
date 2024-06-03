@@ -1,20 +1,19 @@
 import { StateCreator } from "zustand";
-import { type Column, type Task, DnDHandler } from "./types";
-
-// uses columnId as key
-export type Container = {
-  column: Column;
-  tasks: Task[];
-};
+import { type Column, type Task, type Container, DnDHandler } from "./types";
 
 export interface DnDProps {
   handler: DnDHandler;
+  // container with the mouse is hovering over it
+  // rip decoupling lmao
+  hoveringContainer: string | null;
 }
 
 export interface DnDSlice extends DnDProps {
-  getTasks: (containerId?: string) => Task[];
-  // getColumns: () => Column[];
+  getHoveringContainer: () => string | null;
+  setHoveringContainer: (containerId: string | null) => void;
 
+  // handled by dnd handler
+  getTasks: (containerId?: string) => Task[];
   getTask: (id: string) => Task | undefined;
   getColumn: (id: string) => Column | undefined;
   getContainer: (id: string) => Container | undefined;
@@ -30,7 +29,7 @@ export interface DnDSlice extends DnDProps {
   // inserts fromTask into new column, after toTask
   insertTaskIntoColumn: (fromTaskId: string, toTaskId: string) => void;
 
-  // remove is gonna fuck up the indexes
+  // remove is gonna fuck up the indexes, update later
 }
 
 export const createDnDSlice: (
@@ -39,6 +38,7 @@ export const createDnDSlice: (
   (initialState: DnDProps) => (set, get) => {
     const DEFAULT_STATE: DnDProps = {
       handler: new DnDHandler(),
+      hoveringContainer: null,
     };
 
     const updateStore = () => set({ handler: new DnDHandler(get().handler) });
@@ -46,6 +46,10 @@ export const createDnDSlice: (
     return {
       ...DEFAULT_STATE,
       ...initialState,
+
+      getHoveringContainer: () => get().hoveringContainer,
+      setHoveringContainer: (containerId: string | null) =>
+        set({ hoveringContainer: containerId }),
 
       getTasks: (containerId?: string) => get().handler.getTasks(containerId),
       getTask: (id: string) => get().handler.getTask(id),
