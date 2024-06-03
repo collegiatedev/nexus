@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useId } from "react";
+import { useEffect, useState, useCallback, useId, useRef } from "react";
 import {
   DndContext,
   DragEndEvent,
@@ -14,9 +14,13 @@ import {
 import { createPortal } from "react-dom";
 import { DraggableTask } from "./task";
 import { useMyStore } from "~/lib/store/provider";
+import { syncTaskDueDate } from "../../../actions";
+import dayjs from "dayjs";
 
 export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
-  const [draggingTaskId, setDraggingTaskId] = useState<string | null>(null);
+  // const [draggingTaskId, setDraggingTaskId] = useState<string | null>(null);
+
+  const draggingTaskId = useRef<string | null>(null); // useRef is used to avoid re-render, access value in
 
   const {
     getTask,
@@ -28,7 +32,7 @@ export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
     setIsClient(true);
-  }, []); // Correct dependency array
+  }, []);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -40,12 +44,21 @@ export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
 
   const onDragStart = useCallback((event: DragStartEvent) => {
     if (event.active.data.current?.type === "Task") {
-      setDraggingTaskId(event.active.id as string);
+      draggingTaskId.current = event.active.id as string;
     }
   }, []);
 
-  const onDragEnd = useCallback((_event: DragEndEvent) => {
-    setDraggingTaskId(null);
+  // generalize later
+  const onDragEnd = useCallback(async (_event: DragEndEvent) => {
+    if (draggingTaskId.current) {
+      const task = getTask(draggingTaskId.current);
+      const taskId = Number(task?.id);
+      if (!task || isNaN(taskId)) throw new Error("Invalid task");
+      const dueDate = dayjs(task.columnId).toDate();
+
+      await syncTaskDueDate(taskId, dueDate);
+    }
+    draggingTaskId.current = null;
   }, []);
 
   const onDragOver = useCallback(
@@ -87,9 +100,9 @@ export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
         {isClient &&
           createPortal(
             <DragOverlay>
-              {draggingTaskId &&
+              {draggingTaskId.current &&
                 (() => {
-                  const task = getTask(draggingTaskId);
+                  const task = getTask(draggingTaskId.current);
                   return task ? <DraggableTask task={task} /> : null;
                 })()}
             </DragOverlay>,
