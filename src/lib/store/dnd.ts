@@ -1,11 +1,5 @@
 import { StateCreator } from "zustand";
-import {
-  type Column,
-  type Task,
-  type TaskRef,
-  DnDHandler,
-  DnDHandlerProps,
-} from "./types";
+import { type Column, type Task, DnDHandler } from "./types";
 
 // uses columnId as key
 export type Container = {
@@ -29,12 +23,12 @@ export interface DnDSlice extends DnDProps {
   addColumn: (column: Column) => void;
   addContainer: (container: Container) => void;
 
-  // move task to end of the new column array
-  moveTaskIntoColumn: (taskId: string, columnId: string) => void;
-  // swap tasks within the same column
-  swapTasksInColumn: (fromTaskIndex: string, toTaskIndex: string) => void;
-  // insert Task into new container
-  moveTask: (fromTaskId: string, toTaskId: string) => void;
+  // adds task to the end of the column
+  addTaskIntoColumn: (taskId: string, columnId: string) => void;
+  // swaps taskswithin the same column
+  swapTasksWithinColumn: (fromTaskIndex: string, toTaskIndex: string) => void;
+  // inserts fromTask into new column, after toTask
+  insertTaskIntoColumn: (fromTaskId: string, toTaskId: string) => void;
 
   // remove is gonna fuck up the indexes
 }
@@ -71,16 +65,18 @@ export const createDnDSlice: (
         updateStore();
       },
 
-      moveTaskIntoColumn: (taskId: string, columnId: string) => {
-        get().handler.moveTaskIntoColumn(taskId, columnId);
+      addTaskIntoColumn: (taskId: string, columnId: string) => {
+        get().handler.addTaskIntoColumn(taskId, columnId);
         updateStore();
       },
-      swapTasksInColumn: (fromTaskId: string, toTaskId: string) => {
-        get().handler.swapTasksInColumn(fromTaskId, toTaskId);
+
+      swapTasksWithinColumn: (fromTaskId: string, toTaskId: string) => {
+        get().handler.swapTasksWithinColumn(fromTaskId, toTaskId);
         updateStore();
       },
-      moveTask: (fromTaskId: string, toTaskId: string) => {
-        get().handler.moveTask(fromTaskId, toTaskId);
+
+      insertTaskIntoColumn: (fromTaskId: string, toTaskId: string) => {
+        get().handler.insertTaskIntoColumn(fromTaskId, toTaskId);
         updateStore();
       },
     };

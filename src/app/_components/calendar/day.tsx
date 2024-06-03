@@ -2,15 +2,14 @@
 
 import dayjs from "dayjs";
 import clsx from "clsx";
-import React from "react";
+import React, { memo } from "react";
 import { DraggableTask } from "./dnd/task";
 import { DroppableColumn } from "./dnd/column";
 import { useMyStore } from "~/lib/store/provider";
 
 export const Day = ({ dayId }: { dayId: string }) => {
-  const { getContainer } = useMyStore((state) => state);
-  const dayContainer = getContainer(dayId);
-  if (!dayContainer) return;
+  const dayContainer = useMyStore((state) => state.getContainer(dayId));
+  if (!dayContainer) return null;
 
   // const [isHovered, setIsHovered] = useState(false);
   // const handleMouseEnter = () => setIsHovered(true);
@@ -68,8 +67,7 @@ const DayTitle = ({
 };
 
 const DayTasks = ({ columnId }: { columnId: string }) => {
-  const { getTasks } = useMyStore((state) => state);
-  const tasks = getTasks(columnId);
+  const tasks = useMyStore((state) => state.getTasks(columnId));
 
   return (
     <DroppableColumn columnId={columnId}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useId } from "react";
 import {
   DndContext,
   DragEndEvent,
@@ -18,9 +18,12 @@ import { useMyStore } from "~/lib/store/provider";
 export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
   const [draggingTaskId, setDraggingTaskId] = useState<string | null>(null);
 
-  const { getTask, moveTask, moveTaskIntoColumn, getColumn } = useMyStore(
-    (state) => state,
-  );
+  const {
+    getTask,
+    addTaskIntoColumn,
+    swapTasksWithinColumn,
+    insertTaskIntoColumn,
+  } = useMyStore((state) => state);
 
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
@@ -58,10 +61,18 @@ export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
       const here = getTask(activeId.toString());
       console.log("-> premove", here?.id, here?.columnId);
 
+      const activeTask = getTask(activeId.toString());
       const isOverType = over.data.current?.type;
-      if (isOverType === "Task")
-        moveTask(activeId.toString(), overId.toString());
-      else moveTaskIntoColumn(activeId.toString(), overId.toString()); // overId is a columnId
+      if (isOverType === "Task") {
+        const overTask = getTask(overId.toString());
+        if (activeTask?.columnId === overTask?.columnId)
+          swapTasksWithinColumn(activeId.toString(), overId.toString());
+        else insertTaskIntoColumn(activeId.toString(), overId.toString());
+      } else {
+        // overId is the columnId
+        if (activeTask?.columnId !== overId.toString())
+          addTaskIntoColumn(activeId.toString(), overId.toString());
+      }
 
       if (isOverType === "Task") {
         const here = getTask(overId.toString());
@@ -70,12 +81,13 @@ export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
         console.log("<-postmove Column");
       }
     },
-    [moveTask, moveTaskIntoColumn],
+    [swapTasksWithinColumn, insertTaskIntoColumn, addTaskIntoColumn, getTask],
   );
-
+  const id = useId();
   return (
     <div className="h-full w-full">
       <DndContext
+        id={id}
         sensors={sensors}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}

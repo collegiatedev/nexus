@@ -23,6 +23,7 @@ export type Container = {
 
 export type DnDHandlerProps = DnDHandler | Array<SelectTask>;
 export class DnDHandler {
+  // todo, clean up code with some helper functions in refractor
   private containers: Map<string, Container>;
   private tasksRef: Map<string, TaskRef>;
 
@@ -121,52 +122,51 @@ export class DnDHandler {
       });
     }
   };
+  // adds task to the end of the column
+  addTaskIntoColumn = (taskId: string, columnId: string) => {
+    console.log("--start addTaskIntoColumn");
+    const fromTaskRef = this.tasksRef.get(taskId);
+    if (!fromTaskRef) return;
 
-  moveTaskIntoColumn = (taskId: string, columnId: string) => {
-    console.log("--start moveTaskIntoColumn");
-    const moveTaskRef = this.tasksRef.get(taskId);
-    if (!moveTaskRef) return;
-
-    const moveTask = this.containers.get(moveTaskRef.containerId)?.tasks[
-      moveTaskRef.index
+    const fromTask = this.containers.get(fromTaskRef.containerId)?.tasks[
+      fromTaskRef.index
     ];
-    if (!moveTask) return;
+    if (!fromTask) return;
 
-    const startContainer = this.containers.get(moveTaskRef.containerId);
-    const destContainer = this.containers.get(columnId);
-    if (!startContainer || !destContainer) return;
+    const fromContainer = this.containers.get(fromTaskRef.containerId);
+    const toContainer = this.containers.get(columnId);
+    if (!fromContainer || !toContainer) return;
 
     // remove from current column, update taskRefs
     // remove task from container
-    startContainer.tasks.splice(moveTaskRef.index, 1);
+    fromContainer.tasks.splice(fromTaskRef.index, 1);
     // update taskRef indexes post task removal
-    for (let i = moveTaskRef.index; i < startContainer.tasks.length; i++) {
-      const task = startContainer.tasks[i];
+    for (let i = fromTaskRef.index; i < fromContainer.tasks.length; i++) {
+      const task = fromContainer.tasks[i];
       if (!task) continue;
       this.tasksRef.set(task.id, {
         index: i,
-        containerId: startContainer.column.id,
+        containerId: fromContainer.column.id,
       });
     }
-
-    const destIndex = destContainer.tasks.length;
-    destContainer.tasks.push({ ...moveTask, columnId: columnId });
-    this.tasksRef.set(moveTask.id, {
-      index: destIndex,
+    // add to new column
+    const toIndex = toContainer.tasks.length;
+    toContainer.tasks.push({ ...fromTask, columnId: columnId });
+    this.tasksRef.set(fromTask.id, {
+      index: toIndex,
       containerId: columnId,
     });
 
-    console.log("--finish moveTaskIntoColumn");
+    console.log("--finish addTaskIntoColumn");
   };
-
-  swapTasksInColumn = (fromTaskId: string, toTaskId: string) => {
-    console.log("--start swapTasksInColumn");
-
+  // swaps taskswithin the same column
+  swapTasksWithinColumn = (fromTaskId: string, toTaskId: string) => {
+    console.log("--start swapTasksWithinColumn");
     const fromTaskRef = this.tasksRef.get(fromTaskId);
     const toTaskRef = this.tasksRef.get(toTaskId);
     if (!fromTaskRef || !toTaskRef) return;
 
-    // check tasks are within same column
+    // tasks are within same column
     if (fromTaskRef.containerId === toTaskRef.containerId) {
       const container = this.containers.get(fromTaskRef.containerId);
       if (!container) return;
@@ -186,22 +186,54 @@ export class DnDHandler {
         containerId: fromTaskRef.containerId,
       });
       this.containers.set(fromTaskRef.containerId, container);
-      console.log("--finish swapTasksInColumn");
     }
-  };
 
-  moveTask = (fromTaskId: string, toTaskId: string) => {
-    console.log("--start moveTask");
+    console.log("--finish swapTasksWithinColumn");
+  };
+  // inserts fromTask into new column, after toTask
+  insertTaskIntoColumn = (fromTaskId: string, toTaskId: string) => {
+    console.log("--start insertTaskIntoColumn");
     const fromTaskRef = this.tasksRef.get(fromTaskId);
     const toTaskRef = this.tasksRef.get(toTaskId);
     if (!fromTaskRef || !toTaskRef) return;
 
-    if (fromTaskRef.containerId === toTaskRef.containerId) {
-      this.swapTasksInColumn(fromTaskId, toTaskId);
-    } else {
-      this.moveTaskIntoColumn(fromTaskId, toTaskRef.containerId);
-      this.swapTasksInColumn(fromTaskId, toTaskId);
+    if (fromTaskRef.containerId !== toTaskRef.containerId) {
+      const fromContainer = this.containers.get(fromTaskRef.containerId);
+      const toContainer = this.containers.get(toTaskRef.containerId);
+      if (!fromContainer || !toContainer) return;
+
+      const fromTask = fromContainer.tasks[fromTaskRef.index];
+      if (!fromTask) return;
+
+      // update container task arrays, then update index refs of container
+      fromContainer.tasks.splice(fromTaskRef.index, 1);
+      for (let i = fromTaskRef.index; i < fromContainer.tasks.length; i++) {
+        const task = fromContainer.tasks[i];
+        if (!task) continue;
+        this.tasksRef.set(task.id, {
+          index: i,
+          containerId: fromContainer.column.id,
+        });
+      }
+
+      toContainer.tasks.splice(toTaskRef.index, 0, {
+        ...fromTask,
+        columnId: toContainer.column.id,
+      });
+      for (let i = toTaskRef.index; i < toContainer.tasks.length; i++) {
+        const task = toContainer.tasks[i];
+        if (!task) continue;
+        this.tasksRef.set(task.id, {
+          index: i,
+          containerId: toContainer.column.id,
+        });
+      }
+      // finish task ref update
+      this.tasksRef.set(fromTask.id, {
+        index: toTaskRef.index,
+        containerId: toContainer.column.id,
+      });
     }
-    console.log("--finish moveTask");
+    console.log("--finish insertTaskIntoColumn");
   };
 }
