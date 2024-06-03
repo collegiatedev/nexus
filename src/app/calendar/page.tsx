@@ -1,6 +1,7 @@
 // import { Navbar } from "./_components/_calendar/navbar";
 // import { Calendar } from "./_components/calendar/calendar";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { Calendar } from "./_components/calendar";
 
 export default async function Home() {
   return (
@@ -12,8 +13,7 @@ export default async function Home() {
       </SignedOut>
 
       <SignedIn>
-        {/* <Calendar /> */}
-        hello world
+        <Calendar />
       </SignedIn>
     </main>
   );

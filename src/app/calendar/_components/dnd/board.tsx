@@ -14,8 +14,8 @@ import {
 import { createPortal } from "react-dom";
 import { DraggableTask } from "./task";
 import { useMyStore } from "~/lib/store/provider";
-import { syncTaskDueDate } from "../../../actions";
 import dayjs from "dayjs";
+import { syncTaskDueDate } from "~/app/actions";
 
 export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
   // const [draggingTaskId, setDraggingTaskId] = useState<string | null>(null);

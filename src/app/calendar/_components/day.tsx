@@ -2,7 +2,7 @@
 
 import dayjs from "dayjs";
 import clsx from "clsx";
-import React, { useState } from "react";
+import React from "react";
 import { DraggableTask } from "./dnd/task";
 import { DroppableColumn } from "./dnd/column";
 import { useMyStore } from "~/lib/store/provider";
