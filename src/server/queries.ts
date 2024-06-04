@@ -16,6 +16,18 @@ export const getMyTasks = userAuth(async (authContext) => {
   });
 });
 
+export const getMyTask = userAuth(async (authContext, imgId: number) => {
+  const { userId } = authContext;
+  const task = await db.query.tasks.findFirst({
+    where: (model, { eq }) => eq(model.id, imgId),
+  });
+
+  if (!task) throw new Error("Image not found");
+  // if (task.userId !== userId) throw new Error("Unauthorized");
+
+  return task;
+});
+
 export const updateTaskDueDate = userAuth(
   async (_, taskId: number, newDueDate: Date) => {
     await db

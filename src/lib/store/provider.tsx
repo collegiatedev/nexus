@@ -5,18 +5,18 @@ import { createDnDSlice, DnDSlice } from "./dnd";
 import { createContext, ReactNode, useRef, useContext } from "react";
 import { DnDHandler, DnDHandlerProps } from "./types";
 import { SelectTask } from "~/server/db/schema";
-
-type AllSlices = DnDSlice; // extend this def using unions: DnDSlice | OtherSlice
+import { createModalSlice, ModalSlice } from "./modal";
 
 // add to args as needed
+type AllSlices = DnDSlice & ModalSlice;
 export const createMyStore = (handlerProps?: DnDHandlerProps) => {
-  // typescript is stupid :(
   const handler = handlerProps
     ? new DnDHandler(handlerProps as Array<SelectTask>)
     : new DnDHandler();
 
   return create<AllSlices>()((...a) => ({
-    ...createDnDSlice({ handler })(...a),
+    ...createDnDSlice({ handler, hoveringContainer: null })(...a),
+    ...createModalSlice()(...a),
   }));
 };
 

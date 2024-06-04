@@ -2,6 +2,7 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { OpenModal } from "~/components/ui/modal";
 import { type Task } from "~/lib/store/types";
 
 export const DraggableTask = ({ task }: { task: Task }) => {
@@ -29,10 +30,7 @@ export const DraggableTask = ({ task }: { task: Task }) => {
       <div
         ref={setNodeRef}
         style={style}
-        className="
-        relative
-      flex h-[100px] min-h-[100px] cursor-grab items-center rounded-xl border-2 border-rose-500 bg-[#0D1117] p-2.5 text-left opacity-30
-      "
+        className="relative flex h-[100px] min-h-[100px] cursor-grab items-center rounded-xl border-2 border-rose-500 bg-[#0D1117] p-2.5 text-left opacity-30"
       />
     );
   }
@@ -45,12 +43,15 @@ export const DraggableTask = ({ task }: { task: Task }) => {
       {...listeners}
       className="task relative m-1 flex h-[100px] min-h-[100px] cursor-grab items-center rounded-xl bg-[#505c6f] p-2.5 text-left hover:ring-2 hover:ring-inset hover:ring-rose-500"
     >
-      <div className="my-auto h-[90%] w-full overflow-y-auto overflow-x-hidden whitespace-pre-wrap">
-        <p>{task.name}</p>
-        <p className="border-t border-rose-500">
-          id: {task.id}, parent: {task.columnId}
-        </p>
-      </div>
+      {/* check if you can add this to day instead */}
+      <OpenModal url={`/calendar/task/${task.id}`}>
+        <div className="my-auto h-[90%] w-full overflow-y-auto overflow-x-hidden whitespace-pre-wrap">
+          <p>{task.name}</p>
+          <p className="border-t border-rose-500">
+            id: {task.id}, parent: {task.columnId}
+          </p>
+        </div>
+      </OpenModal>
     </div>
   );
 };
