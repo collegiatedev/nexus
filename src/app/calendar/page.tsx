@@ -1,5 +1,3 @@
-// import { Navbar } from "./_components/_calendar/navbar";
-// import { Calendar } from "./_components/calendar/calendar";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { Month } from "./_components/month";
 
