@@ -1,5 +1,5 @@
 import { SignedIn, SignedOut } from "@clerk/nextjs";
-import { Month } from "./_components/month";
+import { Calendar } from "./_components/calendar";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +12,7 @@ export default async function Home() {
       </SignedOut>
 
       <SignedIn>
-        <Month />
+        <Calendar />
       </SignedIn>
     </main>
   );

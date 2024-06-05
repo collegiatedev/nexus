@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { Day } from "./day";
 import { dateAsId } from "~/lib/utils";
@@ -10,7 +10,6 @@ import { useMyStore } from "~/lib/store/provider";
 interface MonthProps {
   whichMonth?: number;
 }
-// optimize me :(
 export const Month = ({ whichMonth = dayjs().month() }: MonthProps) => {
   const month = getMonth(whichMonth);
 
@@ -30,17 +29,15 @@ export const Month = ({ whichMonth = dayjs().month() }: MonthProps) => {
   // use skeleton in future
   if (!isReady) return <div>Loading...</div>;
   return (
-    <DnDBoard>
-      <div className="grid min-h-[90%] flex-1 grid-rows-5">
-        {month.map((row, i) => (
-          <div className="grid h-auto grid-cols-7" key={i}>
-            {row.map((day, idx) => (
-              <Day dayId={dateAsId(day.toDate())} key={idx} />
-            ))}
-          </div>
-        ))}
-      </div>
-    </DnDBoard>
+    <div className="grid min-h-[90%] flex-1 grid-rows-5">
+      {month.map((row, i) => (
+        <div className="grid h-auto grid-cols-7" key={i}>
+          {row.map((day, idx) => (
+            <Day dayId={dateAsId(day.toDate())} key={idx} />
+          ))}
+        </div>
+      ))}
+    </div>
   );
 };
 
