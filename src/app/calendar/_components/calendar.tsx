@@ -2,23 +2,17 @@
 
 import { useInView } from "react-intersection-observer";
 import { DnDBoard } from "./dnd/board";
+import { currentMonth, getMonth, MonthData } from "../_utils/month";
 import { Month } from "./month";
 import { useEffect, useState } from "react";
 import React from "react";
-import dayjs, { type Dayjs } from "dayjs";
+import dayjs from "dayjs";
+
+// can't use sticky since parent have no fixed height
+// so need to define a fixed height for navbar, fixed positioning
+const NAVBAR_HEIGHT = "100px";
 
 export const Calendar = () => {
-  type MonthData = {
-    month: number;
-    year: number;
-    daysMatrix: Dayjs[][];
-  };
-
-  const currentMonth: MonthData = {
-    month: dayjs().month(),
-    year: dayjs().year(),
-    daysMatrix: getMonth(dayjs().month(), dayjs().year()),
-  };
   const [months, setMonths] = useState<MonthData[]>([currentMonth]);
   const [scrollTrigger, isInView] = useInView();
 
@@ -35,41 +29,44 @@ export const Calendar = () => {
   }, [isInView]);
 
   return (
-    <DnDBoard>
-      {months.map((month, idx) => (
-        <React.Fragment key={idx}>
-          <Month month={month.daysMatrix} />
-          <div ref={scrollTrigger} className="relative bottom-[50vh]" />
-        </React.Fragment>
-      ))}
-    </DnDBoard>
+    <>
+      <DnDBoard>
+        <CalendarNav setMonths={setMonths} />
+        <div className={`pt-[${NAVBAR_HEIGHT}]`}>
+          {months.map((month, idx) => (
+            <React.Fragment key={idx}>
+              <Month month={month.daysMatrix} />
+              <div ref={scrollTrigger} className="relative bottom-[50vh]" />
+            </React.Fragment>
+          ))}
+        </div>
+      </DnDBoard>
+    </>
   );
 };
 
-const getMonth = (month: number, year: number, previousMatrix?: Dayjs[][]) => {
-  month = Math.floor(month);
-  const firstDayOfTheMonth = dayjs(new Date(year, month, 1)).day();
-  let currentMonthCount = 1 - firstDayOfTheMonth;
-
-  const daysMatrix: Dayjs[][] = [];
-  const previousDaysSet = previousMatrix
-    ? new Set(previousMatrix.flat().map((day) => day.format("YYYY-MM-DD")))
-    : new Set();
-
-  for (let week = 0; week < 6; week++) {
-    const weekArray: Dayjs[] = [];
-    for (let day = 0; day < 7; day++) {
-      const currentDay = dayjs(new Date(year, month, currentMonthCount));
-      const formattedDay = currentDay.format("YYYY-MM-DD");
-      if (!previousDaysSet.has(formattedDay)) {
-        weekArray.push(currentDay);
-      }
-      currentMonthCount++;
-    }
-    if (weekArray.length > 0) {
-      daysMatrix.push(weekArray);
-    }
-  }
-
-  return daysMatrix;
+const CalendarNav = ({
+  setMonths,
+}: {
+  setMonths: React.Dispatch<React.SetStateAction<MonthData[]>>;
+}) => {
+  return (
+    // z-index, top layer
+    <nav
+      className={`fixed top-0 flex flex-wrap items-center justify-between p-6 h-[${NAVBAR_HEIGHT}] z-50 w-full border-b bg-background`}
+    >
+      <div className="mr-6 flex flex-shrink-0 items-center">
+        <span className="text-xl font-semibold tracking-tight">
+          {dayjs().format("MMMM YYYY")}
+        </span>
+      </div>
+      <div className="mr-6 flex flex-shrink-0 items-center text-xl font-medium tracking-tight">
+        <button className="text-gray-400">{"<"}</button>
+        <button className="px-3" onClick={() => setMonths([currentMonth])}>
+          Today
+        </button>
+        <button className="text-gray-400">{">"}</button>
+      </div>
+    </nav>
+  );
 };
