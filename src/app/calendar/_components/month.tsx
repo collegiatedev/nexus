@@ -1,18 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import dayjs from "dayjs";
+import { type Dayjs } from "dayjs";
 import { Day } from "./day";
 import { dateAsId } from "~/lib/utils";
 import { DnDBoard } from "./dnd/board";
 import { useMyStore } from "~/lib/store/provider";
 
-interface MonthProps {
-  whichMonth?: number;
-}
-export const Month = ({ whichMonth = dayjs().month() }: MonthProps) => {
-  const month = getMonth(whichMonth);
-
+export const Month = ({ month }: { month: Dayjs[][] }) => {
   // initialize missing days in store (days without tasks)
   const [isReady, setIsReady] = useState(false);
   const { getColumn, addColumn } = useMyStore((state) => state);
@@ -29,7 +24,7 @@ export const Month = ({ whichMonth = dayjs().month() }: MonthProps) => {
   // use skeleton in future
   if (!isReady) return <div>Loading...</div>;
   return (
-    <div className="grid min-h-[90%] flex-1 grid-rows-5">
+    <div className="grid flex-1 grid-rows-5">
       {month.map((row, i) => (
         <div className="grid h-auto grid-cols-7" key={i}>
           {row.map((day, idx) => (
@@ -39,19 +34,4 @@ export const Month = ({ whichMonth = dayjs().month() }: MonthProps) => {
       ))}
     </div>
   );
-};
-
-const getMonth = (month: number) => {
-  month = Math.floor(month);
-  const year = dayjs().year();
-  const firstDayOfTheMonth = dayjs(new Date(year, month, 1)).day();
-  let currentMonthCount = 0 - firstDayOfTheMonth;
-
-  const daysMatrix = new Array(5).fill([]).map(() => {
-    return new Array(7).fill(null).map(() => {
-      currentMonthCount++;
-      return dayjs(new Date(year, month, currentMonthCount));
-    });
-  });
-  return daysMatrix;
 };

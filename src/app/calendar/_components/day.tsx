@@ -1,8 +1,8 @@
 "use client";
 
 import dayjs from "dayjs";
-import clsx from "clsx";
 import React from "react";
+import clsx from "clsx";
 import { DraggableTask } from "./dnd/task";
 import { DroppableColumn } from "./dnd/column";
 import { useMyStore } from "~/lib/store/provider";
@@ -19,7 +19,7 @@ export const Day = ({ dayId }: { dayId: string }) => {
 
   return (
     <div
-      className="relative flex h-auto min-h-[100px] w-full flex-col items-center border"
+      className="relative flex h-auto min-h-[200px] w-full flex-col items-center border"
       onMouseEnter={() => setHoveringContainer(columnId)}
     >
       <DayTitle dayContainer={dayContainer} columnId={columnId} />
