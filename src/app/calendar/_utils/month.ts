@@ -44,20 +44,24 @@ export const currentMonth: MonthData = {
   daysMatrix: getMonth(dayjs().month(), dayjs().year()),
 };
 
-export const lastMonth: MonthData = {
-  month: (dayjs().month() - 1 + 12) % 12,
-  year: dayjs().year() - (dayjs().month() === 0 ? 1 : 0),
-  daysMatrix: getMonth(
-    (dayjs().month() - 1 + 12) % 12,
-    dayjs().year() - (dayjs().month() === 0 ? 1 : 0),
-  ),
+export const lastMonth = (current: MonthData) => {
+  return {
+    month: (current.month - 1 + 12) % 12,
+    year: current.year - (current.month === 0 ? 1 : 0),
+    daysMatrix: getMonth(
+      (current.month - 1 + 12) % 12,
+      current.year - (current.month === 0 ? 1 : 0),
+    ),
+  } as MonthData;
 };
 
-export const nextMonth: MonthData = {
-  month: (dayjs().month() + 1) % 12,
-  year: dayjs().year() + (dayjs().month() === 11 ? 1 : 0),
-  daysMatrix: getMonth(
-    (dayjs().month() + 1) % 12,
-    dayjs().year() + (dayjs().month() === 11 ? 1 : 0),
-  ),
+export const nextMonth = (current: MonthData) => {
+  return {
+    month: (current.month + 1) % 12,
+    year: current.year + (current.month === 11 ? 1 : 0),
+    daysMatrix: getMonth(
+      (current.month + 1) % 12,
+      current.year + (current.month === 11 ? 1 : 0),
+    ),
+  };
 };

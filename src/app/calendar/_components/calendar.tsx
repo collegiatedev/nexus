@@ -2,7 +2,13 @@
 
 import { useInView } from "react-intersection-observer";
 import { DnDBoard } from "./dnd/board";
-import { currentMonth, getMonth, MonthData } from "../_utils/month";
+import {
+  currentMonth,
+  getMonth,
+  lastMonth,
+  MonthData,
+  nextMonth,
+} from "../_utils/month";
 import { Month } from "./month";
 import { useEffect, useState } from "react";
 import React from "react";
@@ -10,7 +16,8 @@ import dayjs from "dayjs";
 
 // can't use sticky since parent have no fixed height
 // so need to define a fixed height for navbar, fixed positioning
-const NAVBAR_HEIGHT = "100px";
+// const wasn't working either soo just hard coded it
+// NAVBAR_HEIGHT = "100px";
 
 export const Calendar = () => {
   const [months, setMonths] = useState<MonthData[]>([currentMonth]);
@@ -32,7 +39,7 @@ export const Calendar = () => {
     <>
       <DnDBoard>
         <CalendarNav setMonths={setMonths} />
-        <div className={`pt-[${NAVBAR_HEIGHT}]`}>
+        <div className={`pt-[100px]`}>
           {months.map((month, idx) => (
             <React.Fragment key={idx}>
               <Month month={month.daysMatrix} />
@@ -50,10 +57,12 @@ const CalendarNav = ({
 }: {
   setMonths: React.Dispatch<React.SetStateAction<MonthData[]>>;
 }) => {
+  const [navMonth, setNavMonth] = useState(currentMonth);
+
   return (
     // z-index, top layer
     <nav
-      className={`fixed top-0 flex flex-wrap items-center justify-between p-6 h-[${NAVBAR_HEIGHT}] z-50 w-full border-b bg-background`}
+      className={`fixed top-0 z-50 flex h-[100px] w-full flex-wrap items-center justify-between border-b bg-background p-6`}
     >
       <div className="mr-6 flex flex-shrink-0 items-center">
         <span className="text-xl font-semibold tracking-tight">
@@ -61,11 +70,35 @@ const CalendarNav = ({
         </span>
       </div>
       <div className="mr-6 flex flex-shrink-0 items-center text-xl font-medium tracking-tight">
-        <button className="text-gray-400">{"<"}</button>
-        <button className="px-3" onClick={() => setMonths([currentMonth])}>
+        <button
+          className="text-gray-400"
+          onClick={() => {
+            const month = lastMonth(navMonth);
+            setMonths([month]);
+            setNavMonth(month);
+          }}
+        >
+          {"<"}
+        </button>
+        <button
+          className="px-3"
+          onClick={() => {
+            setMonths([currentMonth]);
+            setNavMonth(currentMonth);
+          }}
+        >
           Today
         </button>
-        <button className="text-gray-400">{">"}</button>
+        <button
+          className="text-gray-400"
+          onClick={() => {
+            const month = nextMonth(navMonth);
+            setMonths([month]);
+            setNavMonth(month);
+          }}
+        >
+          {">"}
+        </button>
       </div>
     </nav>
   );

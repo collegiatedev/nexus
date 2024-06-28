@@ -10,13 +10,13 @@ import { type Container } from "~/lib/store/types";
 
 export const Day = ({ dayId }: { dayId: string }) => {
   const dayContainer = useMyStore((state) => state.getContainer(dayId));
-  if (!dayContainer) return null;
-  const columnId = dayContainer.column.id;
+  const columnId = dayContainer?.column.id;
 
   const setHoveringContainer = useMyStore(
     (state) => state.setHoveringContainer,
   );
 
+  if (!dayContainer || !columnId) return null;
   return (
     <div
       className="relative flex h-auto min-h-[200px] w-full flex-col items-center border"
