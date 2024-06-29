@@ -8,11 +8,12 @@ import {
   lastMonth,
   MonthData,
   nextMonth,
+  toNavMonth,
 } from "../_utils/month";
 import { Month } from "./month";
 import { useEffect, useState } from "react";
 import React from "react";
-import dayjs from "dayjs";
+import { useMyStore } from "~/lib/store/provider";
 
 // can't use sticky since parent have no fixed height
 // so need to define a fixed height for navbar, fixed positioning
@@ -30,25 +31,22 @@ export const Calendar = () => {
       const month = (prevMonthData.month + 1) % 12;
       const year = prevMonthData.year + (month === 0 ? 1 : 0);
       const daysMatrix = getMonth(month, year, prevMonthData.daysMatrix);
-
       setMonths((prevMonths) => [...prevMonths, { month, year, daysMatrix }]);
     }
   }, [isInView]);
 
   return (
-    <>
-      <DnDBoard>
-        <CalendarNav setMonths={setMonths} />
-        <div className={`pt-[100px]`}>
-          {months.map((month, idx) => (
-            <React.Fragment key={idx}>
-              <Month month={month.daysMatrix} />
-              <div ref={scrollTrigger} className="relative bottom-[50vh]" />
-            </React.Fragment>
-          ))}
-        </div>
-      </DnDBoard>
-    </>
+    <DnDBoard>
+      <CalendarNav setMonths={setMonths} />
+      <div className={`pt-[100px]`}>
+        {months.map((month, idx) => (
+          <React.Fragment key={idx}>
+            <Month month={month.daysMatrix} />
+          </React.Fragment>
+        ))}
+      </div>
+      <div ref={scrollTrigger} className="relative bottom-[50vh]" />
+    </DnDBoard>
   );
 };
 
@@ -57,25 +55,35 @@ const CalendarNav = ({
 }: {
   setMonths: React.Dispatch<React.SetStateAction<MonthData[]>>;
 }) => {
-  const [navMonth, setNavMonth] = useState(currentMonth);
+  // the acutal month that is being displayed is controlled by the store
+  const navMonth = useMyStore((state) => state.getNavMonth());
+  const setNavMonth = useMyStore((state) => state.setNavMonth);
+  // controlling state for switching between months
+  const navToggleMonth = useMyStore((state) => state.getNavToggleMonth());
+  const setNavToggleMonth = useMyStore((state) => state.setNavToggleMonth);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+    });
+  };
 
   return (
-    // z-index, top layer
     <nav
       className={`fixed top-0 z-50 flex h-[100px] w-full flex-wrap items-center justify-between border-b bg-background p-6`}
     >
       <div className="mr-6 flex flex-shrink-0 items-center">
-        <span className="text-xl font-semibold tracking-tight">
-          {dayjs().format("MMMM YYYY")}
-        </span>
+        <span className="text-xl font-semibold tracking-tight">{navMonth}</span>
       </div>
       <div className="mr-6 flex flex-shrink-0 items-center text-xl font-medium tracking-tight">
         <button
           className="text-gray-400"
           onClick={() => {
-            const month = lastMonth(navMonth);
+            const month = lastMonth(navToggleMonth);
             setMonths([month]);
-            setNavMonth(month);
+            setNavToggleMonth(month);
+            setNavMonth(toNavMonth(month));
+            scrollToTop();
           }}
         >
           {"<"}
@@ -84,7 +92,9 @@ const CalendarNav = ({
           className="px-3"
           onClick={() => {
             setMonths([currentMonth]);
-            setNavMonth(currentMonth);
+            setNavToggleMonth(currentMonth);
+            setNavMonth(toNavMonth(currentMonth));
+            scrollToTop();
           }}
         >
           Today
@@ -92,9 +102,11 @@ const CalendarNav = ({
         <button
           className="text-gray-400"
           onClick={() => {
-            const month = nextMonth(navMonth);
+            const month = nextMonth(navToggleMonth);
             setMonths([month]);
-            setNavMonth(month);
+            setNavToggleMonth(month);
+            setNavMonth(toNavMonth(month));
+            scrollToTop();
           }}
         >
           {">"}

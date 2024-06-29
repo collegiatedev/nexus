@@ -44,6 +44,10 @@ export const currentMonth: MonthData = {
   daysMatrix: getMonth(dayjs().month(), dayjs().year()),
 };
 
+export const toNavMonth = (monthData: MonthData) => {
+  return dayjs(new Date(monthData.year, monthData.month)).format("MMMM YYYY");
+};
+
 export const lastMonth = (current: MonthData) => {
   return {
     month: (current.month - 1 + 12) % 12,

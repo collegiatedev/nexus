@@ -1,16 +1,26 @@
 import { StateCreator } from "zustand";
 import { type Column, type Task, type Container, DnDHandler } from "./types";
+import dayjs from "dayjs";
+import { currentMonth, MonthData } from "~/app/calendar/_utils/month";
 
 export interface DnDProps {
   handler: DnDHandler;
-  // container with the mouse is hovering over it
-  // rip decoupling lmao
-  hoveringContainer: string | null;
+  // interaction state managers (rip decoupling lmao)
+  hoveringContainer: string | null; // container with the mouse is hovering over it
+
+  navMonth: string; // the month that is currently being displayed on navbar
+  navToggleMonth: MonthData; //the internal state for switching between months
 }
 
 export interface DnDSlice extends DnDProps {
   getHoveringContainer: () => string | null;
   setHoveringContainer: (containerId: string | null) => void;
+
+  getNavMonth: () => string;
+  setNavMonth: (month: string) => void;
+
+  getNavToggleMonth: () => MonthData;
+  setNavToggleMonth: (month: MonthData) => void;
 
   // handled by dnd handler
   getTasks: (containerId?: string) => Task[];
@@ -39,6 +49,8 @@ export const createDnDSlice: (
     const DEFAULT_STATE: DnDProps = {
       handler: new DnDHandler(),
       hoveringContainer: null,
+      navMonth: dayjs().format("MMMM YYYY"),
+      navToggleMonth: currentMonth,
     };
 
     const updateStore = () => set({ handler: new DnDHandler(get().handler) });
@@ -51,6 +63,13 @@ export const createDnDSlice: (
       setHoveringContainer: (containerId: string | null) =>
         set({ hoveringContainer: containerId }),
 
+      getNavMonth: () => get().navMonth,
+      setNavMonth: (month: string) => set({ navMonth: month }),
+
+      getNavToggleMonth: () => get().navToggleMonth,
+      setNavToggleMonth: (month: MonthData) => set({ navToggleMonth: month }),
+
+      // dnd handler methods
       getTasks: (containerId?: string) => get().handler.getTasks(containerId),
       getTask: (id: string) => get().handler.getTask(id),
       getColumn: (id: string) => get().handler.getColumn(id),
