@@ -13,6 +13,9 @@ export const getMyTasks = userAuth(async (authContext) => {
   return await db.query.tasks.findMany({
     orderBy: (model, { asc }) => asc(model.dueDate),
     // where: (model, { eq }) => eq(model.userId, userId),
+    with: {
+      tags: true,
+    },
   });
 });
 

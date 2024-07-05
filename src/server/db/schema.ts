@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   pgTableCreator,
   serial,
@@ -25,12 +25,13 @@ export const tasks = createTable("task", {
   updatedAt: timestamp("updated_at", { withTimezone: true }),
   dueDate: date("due_date", { mode: "date" }),
 });
-export type SelectTask = typeof tasks.$inferSelect;
-export type InsertTask = typeof tasks.$inferInsert;
+export const tasksRelations = relations(tasks, ({ many }) => ({
+  tags: many(taskTags),
+}));
 
 export const taskTags = createTable("task_tags", {
   id: serial("id").primaryKey(),
-  taskId: integer("task_id").references(() => tasks.id),
+  taskId: integer("task_id"),
   tag: text("tag", {
     enum: [
       "deadline",
@@ -44,3 +45,9 @@ export const taskTags = createTable("task_tags", {
     ],
   }),
 });
+export const taskTagsRelations = relations(taskTags, ({ one }) => ({
+  task: one(tasks, { fields: [taskTags.taskId], references: [tasks.id] }),
+}));
+
+export type SelectTask = typeof tasks.$inferSelect;
+export type InsertTask = typeof tasks.$inferInsert;
