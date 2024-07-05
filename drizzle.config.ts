@@ -3,7 +3,7 @@ import { env } from "~/env";
 
 export default defineConfig({
   schema: "./src/server/db/schema.ts",
-  out: "./supabase/migrations",
+  out: "./src/server/db/migrations",
   dialect: "postgresql",
   dbCredentials: {
     url: env.POSTGRES_URL,

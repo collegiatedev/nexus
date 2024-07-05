@@ -2,7 +2,7 @@ import "server-only";
 
 import { db } from "./db";
 import { userAuth } from "./wrapper";
-import { tasks } from "./db/schema";
+import { InsertTask, tasks } from "./db/schema";
 import { eq } from "drizzle-orm";
 // import { redirect } from "next/navigation";
 
@@ -36,3 +36,7 @@ export const updateTaskDueDate = userAuth(
       .where(eq(tasks.id, taskId));
   },
 );
+
+export const createTask = userAuth(async (_, task: InsertTask) => {
+  await db.insert(tasks).values(task);
+});
