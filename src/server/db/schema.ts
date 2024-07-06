@@ -9,6 +9,7 @@ import {
   text,
   integer,
 } from "drizzle-orm/pg-core";
+import { TaskTagTypes } from "~/types";
 
 export const createTable = pgTableCreator((name) => `nexus_${name}`);
 
@@ -32,17 +33,8 @@ export const tasksRelations = relations(tasks, ({ many }) => ({
 export const taskTags = createTable("task_tags", {
   id: serial("id").primaryKey(),
   taskId: integer("task_id"),
-  tag: text("tag", {
-    enum: [
-      "deadline",
-      "logistics",
-      "meeting",
-      "exam",
-      "school",
-      "activity",
-      "project",
-      "essays",
-    ],
+  type: text("type", {
+    enum: Object.values(TaskTagTypes) as [string, ...string[]],
   }),
 });
 export const taskTagsRelations = relations(taskTags, ({ one }) => ({

@@ -18,6 +18,9 @@ export default async function RootLayout({
   children: React.ReactNode;
   modal: React.ReactNode;
 }) {
+  // this is broken setup
+  // do a login redirect check
+  // if not logged in, redirect to /login
   const myTasks = await getMyTasks();
   return (
     <MyStoreProvider params={myTasks}>

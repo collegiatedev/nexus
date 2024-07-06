@@ -2,9 +2,10 @@ import "server-only";
 
 import { db } from "./db";
 import { userAuth } from "./wrapper";
-import { InsertTask, tasks } from "./db/schema";
+import { InsertTask, tasks, taskTags } from "./db/schema";
 import { eq } from "drizzle-orm";
-// import { redirect } from "next/navigation";
+import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 // todo: add request pagation and month filter
 export const getMyTasks = userAuth(async (authContext) => {
@@ -23,6 +24,9 @@ export const getMyTask = userAuth(async (authContext, imgId: number) => {
   const { userId } = authContext;
   const task = await db.query.tasks.findFirst({
     where: (model, { eq }) => eq(model.id, imgId),
+    with: {
+      tags: true,
+    },
   });
 
   if (!task) throw new Error("Image not found");
@@ -32,7 +36,7 @@ export const getMyTask = userAuth(async (authContext, imgId: number) => {
 });
 
 export const updateTaskDueDate = userAuth(
-  async (_, taskId: number, newDueDate: Date) => {
+  async (_authContext, taskId: number, newDueDate: Date) => {
     await db
       .update(tasks)
       .set({ dueDate: newDueDate })
@@ -40,6 +44,16 @@ export const updateTaskDueDate = userAuth(
   },
 );
 
-export const createTask = userAuth(async (_, task: InsertTask) => {
-  await db.insert(tasks).values(task);
+export const createTask = userAuth(
+  async (_authContext, _res, task: InsertTask) => {
+    await db.insert(tasks).values(task);
+  },
+);
+
+export const deleteMyTaskTag = userAuth(async (authContext, tagId: number) => {
+  const { userId } = authContext;
+  await db.delete(taskTags).where(eq(taskTags.id, tagId));
+  // const currentPath = req.headers.referer || "/";
+  // revalidatePath(currentPath);
+  // res.status(200).json({ message: "Task tag deleted successfully" });
 });
