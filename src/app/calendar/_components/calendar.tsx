@@ -2,14 +2,6 @@
 
 import { useInView } from "react-intersection-observer";
 import { DnDBoard } from "./dnd/board";
-import {
-  currentMonth,
-  getMonth,
-  lastMonth,
-  MonthData,
-  nextMonth,
-  toNavMonth,
-} from "../_utils/month";
 import { Month } from "./month";
 import { useEffect, useState } from "react";
 import React from "react";
@@ -21,25 +13,26 @@ import { useMyStore } from "~/lib/store/provider";
 // NAVBAR_HEIGHT = "100px";
 
 export const Calendar = () => {
-  const [months, setMonths] = useState<MonthData[]>([currentMonth]);
+  // const [months, setMonths] = useState<MonthData[]>([currentMonth]);
   const [scrollTrigger, isInView] = useInView();
+
+  // why is type casting broken?
+  const calendarMonths = useMyStore((state) => state.getCalendarMonths());
+  const loadNextCalendarMonth = useMyStore(
+    (state) => state.loadNextCalendarMonth,
+  );
 
   useEffect(() => {
     if (isInView) {
-      // Load the next month
-      const prevMonthData = months[months.length - 1]!;
-      const month = (prevMonthData.month + 1) % 12;
-      const year = prevMonthData.year + (month === 0 ? 1 : 0);
-      const daysMatrix = getMonth(month, year, prevMonthData.daysMatrix);
-      setMonths((prevMonths) => [...prevMonths, { month, year, daysMatrix }]);
+      loadNextCalendarMonth();
     }
   }, [isInView]);
 
   return (
     <DnDBoard>
-      <CalendarNav setMonths={setMonths} />
+      <CalendarNav />
       <div className={`pt-[100px]`}>
-        {months.map((month, idx) => (
+        {calendarMonths.map((month, idx) => (
           <React.Fragment key={idx}>
             <Month month={month.daysMatrix} />
           </React.Fragment>
@@ -50,17 +43,12 @@ export const Calendar = () => {
   );
 };
 
-const CalendarNav = ({
-  setMonths,
-}: {
-  setMonths: React.Dispatch<React.SetStateAction<MonthData[]>>;
-}) => {
-  // the acutal month that is being displayed is controlled by the store
-  const navMonth = useMyStore((state) => state.getNavMonth());
-  const setNavMonth = useMyStore((state) => state.setNavMonth);
-  // controlling state for switching between months
-  const navToggleMonth = useMyStore((state) => state.getNavToggleMonth());
-  const setNavToggleMonth = useMyStore((state) => state.setNavToggleMonth);
+const CalendarNav = () => {
+  // the actual month that is being displayed is controlled by the store
+  const navMonth = useMyStore((state) => state.getNavMonthString());
+  const { setCurrentMonth, setPreviousMonth, setNextMonth } = useMyStore(
+    (state) => state,
+  );
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -79,10 +67,7 @@ const CalendarNav = ({
         <button
           className="text-gray-400"
           onClick={() => {
-            const month = lastMonth(navToggleMonth);
-            setMonths([month]);
-            setNavToggleMonth(month);
-            setNavMonth(toNavMonth(month));
+            setPreviousMonth();
             scrollToTop();
           }}
         >
@@ -91,9 +76,7 @@ const CalendarNav = ({
         <button
           className="px-3"
           onClick={() => {
-            setMonths([currentMonth]);
-            setNavToggleMonth(currentMonth);
-            setNavMonth(toNavMonth(currentMonth));
+            setCurrentMonth();
             scrollToTop();
           }}
         >
@@ -102,10 +85,7 @@ const CalendarNav = ({
         <button
           className="text-gray-400"
           onClick={() => {
-            const month = nextMonth(navToggleMonth);
-            setMonths([month]);
-            setNavToggleMonth(month);
-            setNavMonth(toNavMonth(month));
+            setNextMonth();
             scrollToTop();
           }}
         >

@@ -1,4 +1,3 @@
-// for types shared by both backend, frontend
 export enum TaskTagTypes {
   Deadline = "deadline",
   Logistics = "logistics",
@@ -9,3 +8,23 @@ export enum TaskTagTypes {
   Project = "project",
   Essays = "essays",
 }
+
+// used by task store
+export type Column = {
+  id: string;
+  date?: Date;
+};
+export type Task = {
+  id: string;
+  columnId: string;
+  name: string;
+};
+export type TaskRef = {
+  index: number;
+  containerId: string;
+};
+// uses columnId as key
+export type Container = {
+  column: Column;
+  tasks: Task[];
+};

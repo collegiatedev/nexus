@@ -1,25 +1,7 @@
 import { arrayMove } from "@dnd-kit/sortable";
 import { SelectTask } from "~/server/db/schema";
 import { dateAsId } from "../utils";
-
-export type Column = {
-  id: string;
-  date?: Date;
-};
-export type Task = {
-  id: string;
-  columnId: string;
-  name: string;
-};
-export type TaskRef = {
-  index: number;
-  containerId: string;
-};
-// uses columnId as key
-export type Container = {
-  column: Column;
-  tasks: Task[];
-};
+import type { Column, Task, Container, TaskRef } from "~/types";
 
 export type DnDHandlerProps = DnDHandler | Array<SelectTask>;
 export class DnDHandler {

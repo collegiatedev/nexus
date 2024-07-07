@@ -1,4 +1,4 @@
-import { create, StateCreator } from "zustand";
+import { StateCreator } from "zustand";
 
 export interface ModalSlice {
   isOpen: boolean;

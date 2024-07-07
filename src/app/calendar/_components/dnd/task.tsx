@@ -3,7 +3,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { OpenModal } from "~/components/ui/modal";
-import { type Task } from "~/lib/store/types";
+import { Task } from "~/types";
 
 export const DraggableTask = ({ task }: { task: Task }) => {
   const {

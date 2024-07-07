@@ -16,8 +16,8 @@ import {
   SelectValue,
 } from "./select";
 
-export function DatePickerWithPresets() {
-  const [date, setDate] = React.useState<Date>();
+export function DatePicker({ initialDate }: { initialDate: Date | undefined }) {
+  const [date, setDate] = React.useState<Date | undefined>(initialDate);
 
   return (
     <Popover>

@@ -6,9 +6,10 @@ import { createContext, ReactNode, useRef, useContext } from "react";
 import { DnDHandler, DnDHandlerProps } from "./types";
 import { SelectTask } from "~/server/db/schema";
 import { createModalSlice, ModalSlice } from "./modal";
+import { createMonthSlice, MonthSlice } from "./month";
 
 // add to args as needed
-type AllSlices = DnDSlice & ModalSlice;
+type AllSlices = DnDSlice & ModalSlice & MonthSlice;
 export const createMyStore = (handlerProps?: DnDHandlerProps) => {
   const handler = handlerProps
     ? new DnDHandler(handlerProps as Array<SelectTask>)
@@ -17,6 +18,7 @@ export const createMyStore = (handlerProps?: DnDHandlerProps) => {
   return create<AllSlices>()((...a) => ({
     ...createDnDSlice({ handler, hoveringContainer: null })(...a),
     ...createModalSlice()(...a),
+    ...createMonthSlice()(...a),
   }));
 };
 
