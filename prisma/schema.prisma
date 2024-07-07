@@ -1,0 +1,42 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("POSTGRES_URL")
+}
+
+model Task {
+    id          Int       @id @default(autoincrement())
+    name        String?   @db.VarChar(256)
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime?
+    description String?
+    dueDate     DateTime?
+    done        Boolean   @default(false)
+    assigned    String?   @db.VarChar(256)
+    taskTags    TaskTag[]
+
+    @@map("tasks")
+}
+
+model TaskTag {
+    taskId Int
+    type   TaskTagTypes
+    task   Task         @relation(fields: [taskId], references: [id])
+
+    @@id([taskId, type])
+    @@map("task_tags")
+}
+
+enum TaskTagTypes {
+    Deadline  @map("deadline")
+    Logistics @map("logistics")
+    Meeting   @map("meeting")
+    Exam      @map("exam")
+    School    @map("school")
+    Activity  @map("activity")
+    Project   @map("project")
+    Essays    @map("essays")
+}

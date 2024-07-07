@@ -8,9 +8,6 @@
 # testing
 /coverage
 
-# database
-/src/server/db/migrations
-
 # next.js
 /.next/
 /out/
