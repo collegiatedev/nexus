@@ -1,1 +1,0 @@
-ALTER TABLE "nexus_task_tags" RENAME COLUMN "text" TO "tag";
