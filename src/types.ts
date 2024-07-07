@@ -1,16 +1,6 @@
 import { getMyTasks } from "./server/queries";
 
 // ts enums are wack; placed here so both /server + /app can use
-export enum TaskTagTypes {
-  Deadline = "deadline",
-  Logistics = "logistics",
-  Meeting = "meeting",
-  Exam = "exam",
-  School = "school",
-  Activity = "activity",
-  Project = "project",
-  Essays = "essays",
-}
 
 // used by dnd store
 export type Column = {
@@ -24,7 +14,7 @@ export type Task = {
   name: string;
   assignedTo?: string; // id??
   isDone: boolean;
-  tags: TaskTagTypes[];
+  tags: string[]; // change to enum later, based on prisma def
 };
 // uses columnId as key
 export type Container = {

@@ -7,9 +7,7 @@ import {
   type Container,
   type MyTasks,
   isMyTasks,
-  TaskTagTypes,
 } from "~/types";
-import { getMyTasks } from "~/server/queries";
 
 // literally only used for dnd.ts
 // terrible pattern, will refractor later
@@ -36,11 +34,15 @@ export class DnDHandler {
       this.containers = new Map(arg.getContainers());
       this.tasksRef = new Map(arg.getTaskRefs());
       return;
-    } else if (isMyTasks(arg)) {
+
+      // just trying to get it to work for now
+      // this is bad, refractor later
+      // isMyTasks(arg)
+    } else {
       // calendarTasks
       this.containers = new Map();
       this.tasksRef = new Map();
-      arg.forEach((task) => {
+      arg?.forEach((task) => {
         if (task.dueDate) {
           const columnId = dateAsId(task.dueDate);
 
@@ -56,9 +58,9 @@ export class DnDHandler {
             id: task.id.toString(),
             columnId,
             name: task.name as string,
-            assignedTo: task.assignedTo as string,
-            isDone: task.isDone as boolean,
-            tags: task.tags.map((tag) => tag.type) as TaskTagTypes[],
+            assignedTo: task.assigned as string,
+            isDone: task.done as boolean,
+            tags: task.taskTags.map((tag) => tag.type),
           });
           this.tasksRef.set(task.id.toString(), {
             index,

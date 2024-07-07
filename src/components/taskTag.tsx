@@ -1,14 +1,14 @@
+import { TaskTagTypes } from "@prisma/client";
 import { X } from "lucide-react";
 import { revalidatePath } from "next/cache";
 import { deleteMyTaskTag } from "~/server/queries";
-import { TaskTagTypes } from "~/types";
 
 export const TaskTag = ({
   type,
-  tagId,
+  taskId,
 }: {
   type: TaskTagTypes;
-  tagId: number;
+  taskId: number;
 }) => {
   const tagColor = getTagColor(type);
 
@@ -19,7 +19,7 @@ export const TaskTag = ({
         // double check if this works for all implementations
         action={async () => {
           "use server";
-          await deleteMyTaskTag(tagId);
+          await deleteMyTaskTag({ type, taskId });
           revalidatePath("/tasks/[id]");
         }}
       >
@@ -34,6 +34,7 @@ export const TaskTag = ({
   );
 };
 
+// change to enum later
 const getTagColor = (type: TaskTagTypes) => {
   switch (type) {
     case TaskTagTypes.Deadline:

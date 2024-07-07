@@ -2,7 +2,7 @@ import "server-only";
 
 import { db } from "./db";
 import { userAuth } from "./wrapper";
-import { type Prisma } from "@prisma/client";
+import type { TaskTagTypes, Prisma } from "@prisma/client";
 
 // todo: add request pagation and month filter
 export const getMyTasks = userAuth(async (authContext) => {
@@ -59,11 +59,16 @@ export const createTask = userAuth(
   },
 );
 
-export const deleteMyTaskTag = userAuth(async (authContext, tagId: number) => {
-  const { userId } = authContext;
-  //   await db.taskTag.delete({
-  //     where: {
-  //       id: tagId,
-  //     },
-  //   });
-});
+export const deleteMyTaskTag = userAuth(
+  async (authContext, { taskId, type }: { taskId: number; type: string }) => {
+    const { userId } = authContext;
+    await db.taskTag.delete({
+      where: {
+        taskId_type: {
+          taskId,
+          type: type as TaskTagTypes,
+        },
+      },
+    });
+  },
+);

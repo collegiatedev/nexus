@@ -10,7 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-import { TaskTagTypes } from "~/types";
+import { MyTasks } from "~/types";
 
 export default async function TaskModal({
   params: { id: taskId },
@@ -35,8 +35,11 @@ export default async function TaskModal({
   );
 }
 
-type Task = Awaited<ReturnType<typeof getMyTask>>;
-const TaskFieldsTable = ({ task }: { task: Task }) => {
+const TaskFieldsTable = ({
+  task,
+}: {
+  task: MyTasks[number]; // gets singular task from MyTasks array
+}) => {
   return (
     <Table className="my-10 mb-16 border-b border-t">
       <TableBody className="text-xl">
@@ -57,9 +60,13 @@ const TaskFieldsTable = ({ task }: { task: Task }) => {
           <Popover>
             <PopoverTrigger className="w-full">
               <TableCell className="flex flex-wrap gap-2 hover:bg-muted/50">
-                {task.tags.length !== 0 ? (
-                  task.tags.map((tag) => (
-                    <TaskTag type={tag.type as TaskTagTypes} tagId={tag.id} />
+                {task.taskTags.length !== 0 ? (
+                  task.taskTags.map((tag) => (
+                    <TaskTag
+                      type={tag.type}
+                      taskId={task.id}
+                      key={`${task.id}-${tag.type}`}
+                    />
                   ))
                 ) : (
                   <p className="cursor-default font-light opacity-50">Empty</p>
