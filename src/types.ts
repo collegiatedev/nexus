@@ -1,3 +1,4 @@
+// ts enums are wack; placed here so both /server + /app can use
 export enum TaskTagTypes {
   Deadline = "deadline",
   Logistics = "logistics",
@@ -9,7 +10,7 @@ export enum TaskTagTypes {
   Essays = "essays",
 }
 
-// used by task store
+// used by dnd store
 export type Column = {
   id: string;
   date?: Date;
