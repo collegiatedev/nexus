@@ -2,15 +2,15 @@ import "server-only";
 
 import { db } from "./db";
 import { userAuth } from "./wrapper";
-import { InsertTask, tasks, taskTags } from "./db/schema";
 import { eq } from "drizzle-orm";
+import { InsertTask, tasks, taskTags } from "./db/schema";
 
 // todo: add request pagation and month filter
 export const getMyTasks = userAuth(async (authContext) => {
   const { userId } = authContext;
 
   return await db.query.tasks.findMany({
-    orderBy: (model, { asc }) => asc(model.dueDate),
+    orderBy: (model, { asc }) => asc(model.due_date),
     // where: (model, { eq }) => eq(model.userId, userId),
     with: {
       tags: true,
@@ -38,7 +38,7 @@ export const updateTaskDueDate = userAuth(
   async (_authContext, taskId: number, newDueDate: Date) => {
     await db
       .update(tasks)
-      .set({ dueDate: newDueDate })
+      .set({ due_date: newDueDate.toDateString() })
       .where(eq(tasks.id, taskId));
   },
 );
@@ -51,9 +51,5 @@ export const createTask = userAuth(
 
 export const deleteMyTaskTag = userAuth(async (authContext, tagId: number) => {
   const { userId } = authContext;
-  // await db.delete(taskTags).where(eq(taskTags.id, tagId));
-
-  // const currentPath = req.headers.referer || "/";
-  // revalidatePath(currentPath);
-  // res.status(200).json({ message: "Task tag deleted successfully" });
+  await db.delete(taskTags).where(eq(taskTags.id, tagId));
 });

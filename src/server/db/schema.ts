@@ -1,64 +1,42 @@
-import { relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import {
-  pgTableCreator,
+  pgTable,
   serial,
-  timestamp,
   varchar,
+  timestamp,
   date,
   boolean,
-  text,
   integer,
-  primaryKey,
+  text,
 } from "drizzle-orm/pg-core";
-// import { TaskTagTypes } from "~/types";
+import { TaskTagTypes } from "~/types";
 
-export const createTable = pgTableCreator((name) => `nexus_${name}`);
-
-export const tasks = createTable("task", {
-  id: serial("id").primaryKey(),
+export const tasks = pgTable("tasks", {
+  id: serial("id").primaryKey().notNull(),
   name: varchar("name", { length: 256 }),
-  // change to json type
-  description: varchar("description", { length: 256 }),
-  isDone: boolean("done").default(false).notNull(),
-  assignedTo: varchar("assigned", { length: 256 }),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .default(sql`CURRENT_TIMESTAMP`)
+  created_at: timestamp("created_at", { withTimezone: true, mode: "string" })
+    .defaultNow()
     .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }),
-  dueDate: date("due_date", { mode: "date" }),
+  updated_at: timestamp("updated_at", { withTimezone: true, mode: "string" }),
+  description: varchar("description", { length: 256 }),
+  due_date: date("due_date"),
+  done: boolean("done").default(false),
+  assigned: varchar("assigned", { length: 256 }),
 });
 export const tasksRelations = relations(tasks, ({ many }) => ({
   tags: many(taskTags),
 }));
 
-enum TaskTagTypes {
-  Deadline = "deadline",
-  Logistics = "logistics",
-  Meeting = "meeting",
-  Exam = "exam",
-  School = "school",
-  Activity = "activity",
-  Project = "project",
-  Essays = "essays",
-}
-
-export const taskTags = createTable(
-  "task_tags",
-  {
-    taskId: integer("task_id").notNull(),
-    type: text("type", {
-      enum: Object.values(TaskTagTypes) as [string, ...string[]],
-    }).notNull(),
-  },
-  (table) => {
-    return {
-      pk: primaryKey({ name: "id", columns: [table.taskId, table.type] }),
-    };
-  },
-);
+export const taskTags = pgTable("task_tags", {
+  id: serial("id").primaryKey(),
+  taskId: integer("task_id").references(() => tasks.id),
+  type: text("type", {
+    enum: Object.values(TaskTagTypes) as [string, ...string[]],
+  }).notNull(),
+});
 export const taskTagsRelations = relations(taskTags, ({ one }) => ({
   task: one(tasks, { fields: [taskTags.taskId], references: [tasks.id] }),
 }));
 
-export type SelectTask = typeof tasks.$inferSelect;
 export type InsertTask = typeof tasks.$inferInsert;
+export type InsertTaskTag = typeof taskTags.$inferInsert;
