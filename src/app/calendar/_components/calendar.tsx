@@ -3,7 +3,7 @@
 import { useInView } from "react-intersection-observer";
 import { DnDBoard } from "./dnd/board";
 import { Month } from "./month";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import React from "react";
 import { useMyStore } from "~/lib/store/provider";
 

@@ -45,7 +45,6 @@ const DayTasks = ({ columnId }: { columnId: string }) => {
 };
 
 const InfiniteScrollDetector = ({ dateDayjs }: { dateDayjs: Dayjs }) => {
-  const hoverContainer = useMyStore((state) => state.getHoveringContainer());
   const setNavMonth = useMyStore((state) => state.setNavMonth);
   const navMonth = useMyStore((state) => state.getNavMonthString());
   return (

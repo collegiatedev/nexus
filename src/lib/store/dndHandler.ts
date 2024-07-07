@@ -1,27 +1,42 @@
 import { arrayMove } from "@dnd-kit/sortable";
-import { SelectTask } from "~/server/db/schema";
+// import { SelectTask } from "~/server/db/schema";
 import { dateAsId } from "../utils";
-import type { Column, Task, Container, TaskRef } from "~/types";
+import {
+  type Column,
+  type Task,
+  type Container,
+  type MyTasks,
+  isMyTasks,
+  TaskTagTypes,
+} from "~/types";
+import { getMyTasks } from "~/server/queries";
 
 // literally only used for dnd.ts
 // terrible pattern, will refractor later
 // need to also make store context provider compatible with fetching
 // will move store context from /calendar/layout.ts to /layout.ts
-export type DnDHandlerProps = DnDHandler | Array<SelectTask>;
+export type DnDHandlerProps = DnDHandler | MyTasks;
+
 export class DnDHandler {
   // todo, clean up code with some helper functions in refractor
   private containers: Map<string, Container>;
-  private tasksRef: Map<string, TaskRef>;
+  private tasksRef: Map<
+    string,
+    {
+      index: number;
+      containerId: string;
+    }
+  >;
 
   constructor(); // default constructor
   constructor(handler: DnDHandler); // copy constructor
-  constructor(calendarTasks: Array<SelectTask>); // for calendar tasks
+  constructor(calendarTasks: MyTasks); // for calendar tasks
   constructor(arg?: DnDHandlerProps) {
     if (arg instanceof DnDHandler) {
       this.containers = new Map(arg.getContainers());
       this.tasksRef = new Map(arg.getTaskRefs());
       return;
-    } else if (arg instanceof Array) {
+    } else if (isMyTasks(arg)) {
       // calendarTasks
       this.containers = new Map();
       this.tasksRef = new Map();
@@ -41,6 +56,9 @@ export class DnDHandler {
             id: task.id.toString(),
             columnId,
             name: task.name as string,
+            assignedTo: task.assignedTo as string,
+            isDone: task.isDone as boolean,
+            tags: task.tags.map((tag) => tag.type) as TaskTagTypes[],
           });
           this.tasksRef.set(task.id.toString(), {
             index,

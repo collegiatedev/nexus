@@ -8,8 +8,9 @@ import {
   boolean,
   text,
   integer,
+  primaryKey,
 } from "drizzle-orm/pg-core";
-import { TaskTagTypes } from "~/types";
+// import { TaskTagTypes } from "~/types";
 
 export const createTable = pgTableCreator((name) => `nexus_${name}`);
 
@@ -18,7 +19,7 @@ export const tasks = createTable("task", {
   name: varchar("name", { length: 256 }),
   // change to json type
   description: varchar("description", { length: 256 }),
-  isDone: boolean("done").default(false),
+  isDone: boolean("done").default(false).notNull(),
   assignedTo: varchar("assigned", { length: 256 }),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
@@ -30,13 +31,31 @@ export const tasksRelations = relations(tasks, ({ many }) => ({
   tags: many(taskTags),
 }));
 
-export const taskTags = createTable("task_tags", {
-  id: serial("id").primaryKey(),
-  taskId: integer("task_id"),
-  type: text("type", {
-    enum: Object.values(TaskTagTypes) as [string, ...string[]],
-  }),
-});
+enum TaskTagTypes {
+  Deadline = "deadline",
+  Logistics = "logistics",
+  Meeting = "meeting",
+  Exam = "exam",
+  School = "school",
+  Activity = "activity",
+  Project = "project",
+  Essays = "essays",
+}
+
+export const taskTags = createTable(
+  "task_tags",
+  {
+    taskId: integer("task_id").notNull(),
+    type: text("type", {
+      enum: Object.values(TaskTagTypes) as [string, ...string[]],
+    }).notNull(),
+  },
+  (table) => {
+    return {
+      pk: primaryKey({ name: "id", columns: [table.taskId, table.type] }),
+    };
+  },
+);
 export const taskTagsRelations = relations(taskTags, ({ one }) => ({
   task: one(tasks, { fields: [taskTags.taskId], references: [tasks.id] }),
 }));

@@ -3,7 +3,7 @@
 import { create, useStore } from "zustand";
 import { createDnDSlice, DnDSlice } from "./dnd";
 import { createContext, ReactNode, useRef, useContext } from "react";
-import { DnDHandler, DnDHandlerProps } from "./types";
+import { DnDHandler, DnDHandlerProps } from "./dndHandler";
 import { SelectTask } from "~/server/db/schema";
 import { createModalSlice, ModalSlice } from "./modal";
 import { createMonthSlice, MonthSlice } from "./month";

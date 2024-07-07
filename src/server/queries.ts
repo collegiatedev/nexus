@@ -4,8 +4,6 @@ import { db } from "./db";
 import { userAuth } from "./wrapper";
 import { InsertTask, tasks, taskTags } from "./db/schema";
 import { eq } from "drizzle-orm";
-import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
 
 // todo: add request pagation and month filter
 export const getMyTasks = userAuth(async (authContext) => {
@@ -19,6 +17,7 @@ export const getMyTasks = userAuth(async (authContext) => {
     },
   });
 });
+export type MyTasks = Awaited<ReturnType<typeof getMyTasks>>;
 
 export const getMyTask = userAuth(async (authContext, imgId: number) => {
   const { userId } = authContext;
@@ -52,7 +51,8 @@ export const createTask = userAuth(
 
 export const deleteMyTaskTag = userAuth(async (authContext, tagId: number) => {
   const { userId } = authContext;
-  await db.delete(taskTags).where(eq(taskTags.id, tagId));
+  // await db.delete(taskTags).where(eq(taskTags.id, tagId));
+
   // const currentPath = req.headers.referer || "/";
   // revalidatePath(currentPath);
   // res.status(200).json({ message: "Task tag deleted successfully" });

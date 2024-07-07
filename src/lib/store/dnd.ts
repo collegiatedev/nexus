@@ -1,5 +1,5 @@
 import { StateCreator } from "zustand";
-import { DnDHandler } from "./types";
+import { DnDHandler } from "./dndHandler";
 import { Column, Container, Task } from "~/types";
 
 export interface DnDProps {

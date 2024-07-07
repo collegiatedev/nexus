@@ -10,7 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-import { type TaskTagTypes } from "~/lib/store/types";
+import { TaskTagTypes } from "~/types";
 
 export default async function TaskModal({
   params: { id: taskId },
