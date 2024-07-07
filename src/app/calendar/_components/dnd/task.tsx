@@ -30,7 +30,7 @@ export const DraggableTask = ({ task }: { task: Task }) => {
       <div
         ref={setNodeRef}
         style={style}
-        className="relative flex h-[100px] min-h-[100px] cursor-grab items-center rounded-xl border-2 border-rose-500 bg-[#0D1117] p-2.5 text-left opacity-30"
+        className="relative flex h-[100px] min-h-[100px] cursor-pointer items-center rounded-xl border-2 border-rose-500 bg-[#0D1117] p-2.5 text-left opacity-30"
       />
     );
   }
@@ -41,7 +41,7 @@ export const DraggableTask = ({ task }: { task: Task }) => {
       style={style}
       {...attributes}
       {...listeners}
-      className="task relative m-1 flex h-[100px] min-h-[100px] cursor-grab items-center rounded-xl bg-[#505c6f] p-2.5 text-left hover:ring-2 hover:ring-inset hover:ring-rose-500"
+      className="task relative m-1 flex h-[100px] min-h-[100px] cursor-pointer items-center rounded-xl bg-[#505c6f] p-2.5 text-left hover:ring-2 hover:ring-inset hover:ring-rose-500"
     >
       {/* check if you can add this to day instead */}
       <OpenModal url={`/calendar/task/${task.id}`}>
