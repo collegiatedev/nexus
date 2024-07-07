@@ -23,8 +23,8 @@ export const createMyStore = (handlerProps?: DnDHandlerProps) => {
 };
 
 type CreateMyStoreReturn = ReturnType<typeof createMyStore>;
-
 const MyStoreContext = createContext<CreateMyStoreReturn | null>(null);
+
 export const MyStoreProvider = ({
   children,
   params,

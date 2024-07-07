@@ -3,6 +3,10 @@ import { SelectTask } from "~/server/db/schema";
 import { dateAsId } from "../utils";
 import type { Column, Task, Container, TaskRef } from "~/types";
 
+// literally only used for dnd.ts
+// terrible pattern, will refractor later
+// need to also make store context provider compatible with fetching
+// will move store context from /calendar/layout.ts to /layout.ts
 export type DnDHandlerProps = DnDHandler | Array<SelectTask>;
 export class DnDHandler {
   // todo, clean up code with some helper functions in refractor
