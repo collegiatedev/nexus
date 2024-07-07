@@ -12,7 +12,7 @@
     "db:studio": "prisma studio",
     "db:seed": "prisma db seed",
     "db:execute": "prisma db execute --schema ./prisma/schema.prisma --file",
-    "dev": "next dev && prisma generate --watch",
+    "dev": "next dev",
     "lint": "next lint",
     "start": "next start"
   },

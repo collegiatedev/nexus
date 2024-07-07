@@ -12,29 +12,28 @@ export const getMyTasks = userAuth(async (authContext) => {
     orderBy: {
       dueDate: "asc",
     },
-    // where: {
-    //   userId: userId,
-    // },
     include: {
       taskTags: true,
     },
+    // where: {
+    //   userId: userId,
+    // },
   });
 });
 export type MyTasks = Awaited<ReturnType<typeof getMyTasks>>;
 
-export const getMyTask = userAuth(async (authContext, imgId: number) => {
+export const getMyTask = userAuth(async (authContext, taskId: number) => {
   const { userId } = authContext;
   const task = await db.task.findFirst({
     where: {
-      id: imgId,
+      id: taskId,
     },
     include: {
       taskTags: true,
     },
   });
 
-  if (!task) throw new Error("Image not found");
-  // if (task.userId !== userId) throw new Error("Unauthorized");
+  if (!task) throw new Error("Task not found");
 
   return task;
 });
