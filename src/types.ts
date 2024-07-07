@@ -1,7 +1,5 @@
+import { TaskTagTypes } from "@prisma/client";
 import { getMyTasks } from "./server/queries";
-
-// ts enums are wack; placed here so both /server + /app can use
-
 // used by dnd store
 export type Column = {
   id: string;
@@ -14,7 +12,7 @@ export type Task = {
   name: string;
   assignedTo?: string; // id??
   isDone: boolean;
-  tags: string[]; // change to enum later, based on prisma def
+  tags: TaskTagTypes[];
 };
 // uses columnId as key
 export type Container = {
@@ -23,6 +21,7 @@ export type Container = {
 };
 
 // MyTasks with type guard
+// delete later
 export type MyTasks = Awaited<ReturnType<typeof getMyTasks>>;
 export const isMyTasks = (arg: any): arg is MyTasks => {
   return (
