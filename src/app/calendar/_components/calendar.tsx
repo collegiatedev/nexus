@@ -13,10 +13,8 @@ import { useMyStore } from "~/lib/store/provider";
 // NAVBAR_HEIGHT = "100px";
 
 export const Calendar = () => {
-  // const [months, setMonths] = useState<MonthData[]>([currentMonth]);
   const [scrollTrigger, isInView] = useInView();
 
-  // why is type casting broken?
   const calendarMonths = useMyStore((state) => state.getCalendarMonths());
   const loadNextCalendarMonth = useMyStore(
     (state) => state.loadNextCalendarMonth,

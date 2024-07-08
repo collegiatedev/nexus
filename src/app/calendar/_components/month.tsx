@@ -7,12 +7,12 @@ import { dateAsId } from "~/lib/utils";
 import { useMyStore } from "~/lib/store/provider";
 
 export const Month = ({ month }: { month: Dayjs[][] }) => {
-  // initialize missing days in store (days without tasks)
   const [isReady, setIsReady] = useState(false);
   const { getColumn, addColumn } = useMyStore((state) => state);
 
   useEffect(() => {
-    const initializeDays = () => {
+    // add days without tasks into store
+    const initializeMissingDays = () => {
       month.forEach((week) => {
         week.forEach((day) => {
           const dayId = dateAsId(day.toDate());
@@ -21,7 +21,7 @@ export const Month = ({ month }: { month: Dayjs[][] }) => {
       });
       setIsReady(true);
     };
-    initializeDays();
+    initializeMissingDays();
   }, [month]);
 
   // use skeleton in future
