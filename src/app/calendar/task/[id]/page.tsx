@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { BackArrowSVG } from "~/components/icons";
-import { getMyTask, MyTasks } from "~/server/queries";
-import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
+import { getMyTask } from "~/server/queries";
 import { FieldsTable } from "./_components/fields/fieldsTable";
 
 export default async function TaskModal({
