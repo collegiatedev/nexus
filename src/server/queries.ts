@@ -7,7 +7,6 @@ import type { TaskTagTypes, Prisma } from "@prisma/client";
 // todo: add request pagation and month filter
 export const getMyTasks = userAuth(async (authContext) => {
   const { userId } = authContext;
-
   return await db.task.findMany({
     orderBy: {
       dueDate: "asc",
@@ -20,7 +19,7 @@ export const getMyTasks = userAuth(async (authContext) => {
     // },
   });
 });
-export type MyTasks = Awaited<ReturnType<typeof getMyTasks>>;
+export type MyTasks = Prisma.PromiseReturnType<typeof getMyTasks>;
 
 export const getMyTask = userAuth(async (authContext, taskId: number) => {
   const { userId } = authContext;

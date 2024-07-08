@@ -1,22 +1,17 @@
 "use client";
 
 import { create, useStore } from "zustand";
-import { createDnDSlice, DnDSlice } from "./dnd";
+import { createDnDSlice, DnDProps, DnDSlice } from "./dnd";
 import { createContext, ReactNode, useRef, useContext } from "react";
-import { DnDHandler, DnDHandlerProps } from "./dndHandler";
 import { createModalSlice, ModalSlice } from "./modal";
 import { createMonthSlice, MonthSlice } from "./month";
-import { MyTasks } from "~/types";
+import { type MyTasks } from "~/server/queries";
 
 // add to args as needed
 type AllSlices = DnDSlice & ModalSlice & MonthSlice;
-export const createMyStore = (handlerProps?: DnDHandlerProps) => {
-  const handler = handlerProps
-    ? new DnDHandler(handlerProps as MyTasks)
-    : new DnDHandler();
-
+export const createMyStore = (props?: DnDProps) => {
   return create<AllSlices>()((...a) => ({
-    ...createDnDSlice({ handler, hoveringContainer: null })(...a),
+    ...createDnDSlice(props)(...a),
     ...createModalSlice()(...a),
     ...createMonthSlice()(...a),
   }));
@@ -27,13 +22,13 @@ const MyStoreContext = createContext<CreateMyStoreReturn | null>(null);
 
 export const MyStoreProvider = ({
   children,
-  params,
+  // params,
 }: {
   children: ReactNode;
-  params?: DnDHandlerProps; // extend this def later
+  // params?: DnDHandlerProps; // extend this def later
 }) => {
   const storeRef = useRef<CreateMyStoreReturn>();
-  if (!storeRef.current) storeRef.current = createMyStore(params);
+  if (!storeRef.current) storeRef.current = createMyStore();
 
   return (
     <MyStoreContext.Provider value={storeRef.current}>
