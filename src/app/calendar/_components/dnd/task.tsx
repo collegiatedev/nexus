@@ -46,10 +46,8 @@ export const DraggableTask = ({ task }: { task: Task }) => {
       {/* check if you can add this to day instead */}
       <OpenModal url={`/calendar/task/${task.id}`}>
         <div className="my-auto h-[90%] w-full overflow-y-auto overflow-x-hidden whitespace-pre-wrap">
-          <p>{task.name}</p>
-          <p className="border-t border-rose-500">
-            id: {task.id}, parent: {task.columnId}
-          </p>
+          <span className="text-lg font-bold">{task.name}</span>
+          <p className="text-sm">{task.tags.join(", ")}</p>
         </div>
       </OpenModal>
     </div>

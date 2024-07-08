@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "./select";
 
-export function DatePicker({ initialDate }: { initialDate: Date | undefined }) {
+export function DatePicker({ initialDate }: { initialDate?: Date }) {
   const [date, setDate] = React.useState<Date | undefined>(initialDate);
 
   return (
