@@ -11,7 +11,7 @@ export const createModalSlice: () => StateCreator<
   [],
   [],
   ModalSlice
-> = () => (set, get) => {
+> = () => (set, _get) => {
   return {
     isOpen: false,
     setOpen: () => set(() => ({ isOpen: true })),

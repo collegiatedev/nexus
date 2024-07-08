@@ -1,6 +1,7 @@
 // import { Calendar } from "./_components/calendar/calendar";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { TopNav } from "./_components/topnav";
+import Link from "next/link";
 
 export default async function Home() {
   return (
@@ -12,7 +13,12 @@ export default async function Home() {
 
       <SignedIn>
         {/* <Calendar /> */}
-        hello world
+        <div className="flex h-dvh flex-col items-center justify-center text-4xl">
+          <p>Pages:</p>
+          <Link href="/calendar" className="text-blue-500">
+            Calendar
+          </Link>
+        </div>
       </SignedIn>
     </main>
   );

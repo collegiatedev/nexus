@@ -10,14 +10,13 @@ type TaskRef = {
 };
 
 export interface DnDProps {
-  hoveringContainer: string | null; // container with the mouse is hovering over it
   containers: Map<string, Container>;
   tasksRef: Map<string, TaskRef>;
 }
+
 export const myTasksToDnDProps = (myTasks: MyTasks): DnDProps => {
   const containers = new Map<string, Container>();
   const tasksRef = new Map<string, TaskRef>();
-
   myTasks.forEach((task) => {
     if (task.dueDate) {
       const columnId = dateAsId(task.dueDate);
@@ -44,17 +43,15 @@ export const myTasksToDnDProps = (myTasks: MyTasks): DnDProps => {
     }
   });
   return {
-    hoveringContainer: null,
     containers,
     tasksRef,
   };
 };
 
 export interface DnDSlice extends DnDProps {
-  getHoveringContainer: () => string | null;
-  setHoveringContainer: (containerId: string | null) => void;
+  // adds newly fetched tasks to the store
+  addDndProps: (props: DnDProps) => void;
 
-  // handled by dnd handler
   getTasks: (containerId?: string) => Task[];
   getTask: (id: string) => Task | undefined;
   getColumn: (id: string) => Column | undefined;
@@ -73,22 +70,25 @@ export interface DnDSlice extends DnDProps {
   // remove is gonna fuck up the indexes, update later
   // removeTask: (taskId: string) => void;
 }
-export const createDnDSlice: (
-  initialState?: DnDProps,
-) => StateCreator<DnDSlice, [], [], DnDSlice> =
-  (initialState?: DnDProps) => (set, get) => {
-    const DEFAULT_STATE: DnDProps = {
-      hoveringContainer: null,
+export const createDnDSlice: () => StateCreator<DnDSlice, [], [], DnDSlice> =
+  () => (set, get) => {
+    return {
       containers: new Map(),
       tasksRef: new Map(),
-    };
-    return {
-      ...DEFAULT_STATE,
-      ...initialState,
 
-      getHoveringContainer: () => get().hoveringContainer,
-      setHoveringContainer: (containerId: string | null) =>
-        set({ hoveringContainer: containerId }),
+      addDndProps: (props: DnDProps) => {
+        const newContainers = new Map(get().containers);
+        props.containers.forEach((value, key) => {
+          newContainers.set(key, value);
+        });
+
+        const newTasksRef = new Map(get().tasksRef);
+        props.tasksRef.forEach((value, key) => {
+          newTasksRef.set(key, value);
+        });
+
+        set({ containers: newContainers, tasksRef: newTasksRef });
+      },
 
       getTasks: (containerId?: string) => {
         if (containerId)

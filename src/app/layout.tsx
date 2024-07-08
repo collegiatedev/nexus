@@ -3,6 +3,7 @@ import "~/styles/globals.css";
 import { GeistSans } from "geist/font/sans";
 import { ClerkProvider } from "@clerk/nextjs";
 import { TopNav } from "./_components/topnav";
+import { MyStoreProvider } from "~/lib/store/provider";
 
 export const metadata = {
   title: "Cool Stuff",
@@ -17,12 +18,14 @@ export default async function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${GeistSans.variable} `}>
-        <body className="dark">
-          {/* <TopNav /> */}
-          {children}
-        </body>
-      </html>
+      <MyStoreProvider>
+        <html lang="en" className={`${GeistSans.variable} `}>
+          <body className="dark">
+            {/* <TopNav /> */}
+            {children}
+          </body>
+        </html>
+      </MyStoreProvider>
     </ClerkProvider>
   );
 }
