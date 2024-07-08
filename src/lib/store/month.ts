@@ -31,6 +31,7 @@ export const createMonthSlice: () => StateCreator<
   const createDaysMatrix = (
     month: number,
     year: number,
+    // if previousMatrix exists, we make sure to not add days that are already in the previous matrix
     previousMatrix?: Dayjs[][],
   ) => {
     month = Math.floor(month);
@@ -93,9 +94,19 @@ export const createMonthSlice: () => StateCreator<
     getCalendarMonths: () => get().calendarMonths,
     setCalendarMonths: (months: Month[]) => set({ calendarMonths: months }),
     loadNextCalendarMonth: () => {
-      const calendar = get().calendarMonths;
-      const next = nextMonth(calendar[calendar.length - 1]!);
-      set({ calendarMonths: [...calendar, next] });
+      const months = get().calendarMonths;
+      const prevMonthData = months[months.length - 1]!;
+      const month = (prevMonthData.month + 1) % 12;
+      const year = prevMonthData.year + (month === 0 ? 1 : 0);
+      const daysMatrix = createDaysMatrix(
+        month,
+        year,
+        prevMonthData.daysMatrix,
+      );
+
+      set({
+        calendarMonths: [...months, { month, year, daysMatrix }],
+      });
     },
 
     setNavMonth: (dayjsMonth: Dayjs) => {
