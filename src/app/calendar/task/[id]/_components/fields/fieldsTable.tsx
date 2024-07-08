@@ -1,6 +1,7 @@
 import { TableBody, TableCell, TableRow, Table } from "~/components/ui/table";
 import { MyTasks } from "~/server/queries";
 import { DueDateField } from "./dueDateField";
+import { AssignedField } from "./assignedField";
 
 export type TaskFields = {
   task: MyTasks[number]; // singular task from MyTasks array
@@ -10,6 +11,7 @@ export const FieldsTable = ({ task }: TaskFields) => {
     <Table className="my-10 mb-16 border-b border-t">
       <TableBody className="text-xl">
         <DueDateField task={task} />
+        <AssignedField task={task} />
         {/* <TableRow key={`assigned ${task.id}`}>
             <TableCell>Assigned</TableCell>
             <TableCell>
