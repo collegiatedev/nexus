@@ -41,7 +41,7 @@ const TagFieldPicker = ({
 
   const debouncedUpdateTags = useDebouncedCallback(async () => {
     await syncTaskTags(taskId, selectedTags);
-  }, 300);
+  }, 200);
   useEffect(() => {
     debouncedUpdateTags();
   }, [selectedTags, debouncedUpdateTags]);

@@ -65,13 +65,17 @@ export const updateTaskDone = userAuth(
 
 export const updateTaskTags = userAuth(
   async (_authContext, taskId: number, taskTags: TaskTagTypes[]) => {
-    await db.task.update({
+    // just write the sql for this, prisma queries are ugly and inefficent
+    await db.taskTag.deleteMany({
       where: {
-        id: taskId,
+        taskId,
       },
-      data: {
-        done: isDone,
-      },
+    });
+    await db.taskTag.createMany({
+      data: taskTags.map((type) => ({
+        taskId,
+        type,
+      })),
     });
   },
 );
