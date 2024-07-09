@@ -2,6 +2,8 @@ import { TableBody, TableCell, TableRow, Table } from "~/components/ui/table";
 import { MyTasks } from "~/server/queries";
 import { DueDateField } from "./dueDateField";
 import { AssignedField } from "./assignedField";
+import { DoneField } from "./doneField";
+import { TagsField } from "./tagsField";
 
 export type TaskFields = {
   task: MyTasks[number]; // singular task from MyTasks array
@@ -11,42 +13,11 @@ export const FieldsTable = ({ task }: TaskFields) => {
     <Table className="my-10 mb-16 border-b border-t">
       <TableBody className="text-xl">
         <DueDateField task={task} />
+
+        {/* todo, with clerk org */}
         <AssignedField task={task} />
-        {/* <TableRow key={`assigned ${task.id}`}>
-            <TableCell>Assigned</TableCell>
-            <TableCell>
-              <p>Username with icon</p>
-            </TableCell>
-          </TableRow> */}
-        {/* <TableRow key={`tags ${task.id}`}>
-            <TableCell>Tags</TableCell>
-            <Popover>
-              <PopoverTrigger className="w-full">
-                <TableCell className="flex flex-wrap gap-2 hover:bg-muted/50">
-                  {task.taskTags.length !== 0 ? (
-                    task.taskTags.map((tag) => (
-                      <TaskTag
-                        type={tag.type}
-                        taskId={task.id}
-                        key={`${task.id}-${tag.type}`}
-                      />
-                    ))
-                  ) : (
-                    <p className="cursor-default font-light opacity-50">Empty</p>
-                  )}
-                </TableCell>
-              </PopoverTrigger>
-              <PopoverContent align="start">
-                Place content for the popover here.
-              </PopoverContent>
-            </Popover>
-          </TableRow> */}
-        {/* <TableRow key={`is done ${task.id}`}>
-            <TableCell>Done</TableCell>
-            <TableCell>
-              <Checkbox />
-            </TableCell>
-          </TableRow> */}
+        <TagsField task={task} />
+        <DoneField task={task} />
       </TableBody>
     </Table>
   );

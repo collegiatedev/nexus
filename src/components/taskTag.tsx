@@ -13,9 +13,9 @@ export const TaskTag = ({
   const tagColor = getTagColor(type);
 
   return (
-    <div className={`rounded-md ${tagColor} flex px-2 py-1 text-lg`}>
+    <div className={`rounded-md ${tagColor} flex w-fit px-2 py-1 text-lg`}>
       {type}
-      <form
+      {/* <form
         // double check if this works for all implementations
         action={async () => {
           "use server";
@@ -29,7 +29,7 @@ export const TaskTag = ({
         >
           <X className="h-5 w-5" />
         </button>
-      </form>
+      </form> */}
     </div>
   );
 };
