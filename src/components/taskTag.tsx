@@ -1,35 +1,33 @@
 import { TaskTagTypes } from "@prisma/client";
 import { X } from "lucide-react";
-import { revalidatePath } from "next/cache";
-import { deleteMyTaskTag } from "~/server/queries";
+import { deleteTaskTag } from "~/app/actions";
 
 export const TaskTag = ({
   type,
   taskId,
+  showDelete = false,
 }: {
   type: TaskTagTypes;
   taskId: number;
+  showDelete?: boolean;
 }) => {
   const tagColor = getTagColor(type);
 
   return (
-    <div className={`rounded-md ${tagColor} flex w-fit px-2 py-1 text-lg`}>
+    <div
+      className={`rounded-md ${tagColor} flex w-fit cursor-pointer px-2 py-1 text-lg`}
+    >
       {type}
-      {/* <form
-        // double check if this works for all implementations
-        action={async () => {
-          "use server";
-          await deleteMyTaskTag({ type, taskId });
-          revalidatePath("/tasks/[id]");
-        }}
-      >
-        <button
-          type="submit"
-          className="ml-1 flex h-full items-center justify-center"
-        >
-          <X className="h-5 w-5" />
-        </button>
-      </form> */}
+      {showDelete && (
+        <form action={async () => await deleteTaskTag(taskId, type)}>
+          <button
+            type="submit"
+            className="ml-1 flex h-full items-center justify-center"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </form>
+      )}
     </div>
   );
 };

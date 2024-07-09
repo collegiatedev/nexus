@@ -6,7 +6,7 @@ import { useUser } from "@clerk/nextjs";
 
 export const AssignedField = ({ task }: TaskFields) => {
   return (
-    <FieldFormat label="Assigned" taskId={task.id} hovers={true}>
+    <FieldFormat label="Assigned" taskId={task.id}>
       <AssignedUser />
     </FieldFormat>
   );

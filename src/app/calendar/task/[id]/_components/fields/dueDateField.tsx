@@ -22,7 +22,7 @@ import { syncTaskDueDate } from "~/app/actions";
 
 export const DueDateField = ({ task }: TaskFields) => {
   return (
-    <FieldFormat label="Due Date" taskId={task.id} hovers={true}>
+    <FieldFormat label="Due Date" taskId={task.id}>
       <FieldDatePicker
         initialDate={task.dueDate ? task.dueDate : undefined}
         taskId={task.id}

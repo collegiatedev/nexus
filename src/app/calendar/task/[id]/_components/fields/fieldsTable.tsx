@@ -27,18 +27,18 @@ export const FieldsTable = ({ task }: TaskFields) => {
 export const FieldFormat = ({
   label,
   taskId,
-  hovers,
   children,
+  hovering = true,
 }: {
   label: string;
   taskId: number;
-  hovers?: boolean;
   children: React.ReactNode;
+  hovering?: boolean;
 }) => {
   return (
     <TableRow key={`${label}-${taskId}`}>
       <TableCell className="w-1/6">{label}</TableCell>
-      <TableCell className={`w-5/6 ${hovers && "hover:bg-muted/50"}`}>
+      <TableCell className={`w-5/6 ${hovering && "hover:bg-muted/50"}`}>
         {children}
       </TableCell>
     </TableRow>

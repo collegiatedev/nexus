@@ -15,7 +15,7 @@ export const DoneField = ({ task }: TaskFields) => {
   }, [isChecked]);
 
   return (
-    <FieldFormat label="Done" taskId={task.id}>
+    <FieldFormat label="Done" taskId={task.id} hovering={false}>
       <Checkbox
         checked={isChecked}
         onCheckedChange={(c: boolean) => setIsChecked(c)}
