@@ -63,6 +63,19 @@ export const updateTaskDone = userAuth(
   },
 );
 
+export const updateTaskTags = userAuth(
+  async (_authContext, taskId: number, taskTags: TaskTagTypes[]) => {
+    await db.task.update({
+      where: {
+        id: taskId,
+      },
+      data: {
+        done: isDone,
+      },
+    });
+  },
+);
+
 export const createTask = userAuth(
   async (_authContext, _res, task: Prisma.TaskCreateInput) => {
     await db.task.create({

@@ -8,9 +8,7 @@ export const DoneField = ({ task }: TaskFields) => {
   const [isChecked, setIsChecked] = useState(task.done);
 
   useEffect(() => {
-    const updateDueDate = async () => {
-      if (isChecked) await syncTaskIsDone(task.id, isChecked);
-    };
+    const updateDueDate = async () => await syncTaskIsDone(task.id, isChecked);
     updateDueDate();
   }, [isChecked]);
 

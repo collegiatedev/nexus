@@ -1,11 +1,10 @@
 "use server";
 
 import type { TaskTagTypes } from "@prisma/client";
-import { revalidatePath } from "next/cache";
 import {
-  deleteMyTaskTag,
   updateTaskDone,
   updateTaskDueDate,
+  updateTaskTags,
 } from "~/server/queries";
 
 export const syncTaskDueDate = async (taskId: number, dueDate: Date) => {
@@ -16,9 +15,6 @@ export const syncTaskIsDone = async (taskId: number, isDone: boolean) => {
   await updateTaskDone(taskId, isDone);
 };
 
-export const deleteTaskTag = async (taskId: number, type: TaskTagTypes) => {
-  await deleteMyTaskTag({ taskId, type });
-  // don't call server, just have optimistic updates via state hooks
-  // this way it seems a lot more responsive
-  // revalidatePath("/tasks/[id]");
+export const syncTaskTags = async (taskId: number, tags: TaskTagTypes[]) => {
+  await updateTaskTags(taskId, tags);
 };

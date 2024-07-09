@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { type TaskFields, FieldFormat } from "./fieldsTable";
 import { TaskTag } from "~/components/taskTag";
 import { TaskTagTypes } from "@prisma/client";
@@ -10,7 +10,8 @@ import {
   PopoverTrigger,
 } from "~/components/ui/popover";
 import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
-import { deleteTaskTag } from "~/app/actions";
+import { syncTaskTags } from "~/app/actions";
+import { useDebouncedCallback } from "use-debounce";
 
 export const TagsField = ({ task }: TaskFields) => {
   const tags = task.taskTags.map((tag) => tag.type);
@@ -37,6 +38,13 @@ const TagFieldPicker = ({
     const allTags = Object.values(TaskTagTypes);
     return allTags.filter((tag) => !selectedTags.includes(tag));
   }, [selectedTags]);
+
+  const debouncedUpdateTags = useDebouncedCallback(async () => {
+    await syncTaskTags(taskId, selectedTags);
+  }, 300);
+  useEffect(() => {
+    debouncedUpdateTags();
+  }, [selectedTags, debouncedUpdateTags]);
 
   return (
     <Popover open={isPopoverOpen}>

@@ -7,9 +7,8 @@ export const TaskTag = ({
   onDelete,
 }: {
   type: TaskTagTypes;
-  // not a great pattern, but good enough
-  showDelete?: boolean;
   onDelete?: (type: TaskTagTypes) => void;
+  showDelete?: boolean;
 }) => {
   const tagColor = getTagColor(type);
 
@@ -18,10 +17,10 @@ export const TaskTag = ({
       className={`rounded-md ${tagColor} flex w-fit cursor-pointer px-2 py-1 text-lg`}
     >
       {type}
-      {showDelete && (
+      {onDelete && showDelete && (
         <button
           className="ml-1 flex h-full items-center justify-center"
-          onClick={onDelete && (() => onDelete(type))}
+          onClick={() => onDelete(type)}
         >
           <X className="h-4 w-4" />
         </button>
