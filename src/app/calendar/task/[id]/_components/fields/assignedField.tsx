@@ -1,7 +1,7 @@
 "use client";
 
 import { TaskFields, FieldFormat } from "./fieldsTable";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { Avatar, AvatarImage } from "~/components/ui/avatar";
 import { useUser } from "@clerk/nextjs";
 import { Skeleton } from "~/components/ui/skeleton";
 import { useState, useEffect } from "react";

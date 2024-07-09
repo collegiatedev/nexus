@@ -80,6 +80,19 @@ export const updateTaskTags = userAuth(
   },
 );
 
+export const updateTaskTitle = userAuth(
+  async (_authContext, taskId: number, name: string) => {
+    await db.task.update({
+      where: {
+        id: taskId,
+      },
+      data: {
+        name,
+      },
+    });
+  },
+);
+
 export const createTask = userAuth(
   async (_authContext, _res, task: Prisma.TaskCreateInput) => {
     await db.task.create({

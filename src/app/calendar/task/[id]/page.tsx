@@ -2,6 +2,7 @@ import Link from "next/link";
 import { BackArrowSVG } from "~/components/icons";
 import { getMyTask } from "~/server/queries";
 import { FieldsTable } from "./_components/fields/fieldsTable";
+import { TaskTitle } from "./_components/title";
 
 export default async function TaskModal({
   params: { id: taskId },
@@ -17,8 +18,8 @@ export default async function TaskModal({
       <Link href="/calendar">
         <BackArrowSVG />
       </Link>
-      <div className="flex w-full flex-col gap-4 bg-black pl-10">
-        <h1 className="text-6xl font-normal">{task.name}</h1>
+      <div className="flex w-full flex-col gap-4 pl-10">
+        <TaskTitle title={task.name as string} taskId={task.id} />
         <FieldsTable task={task} />
         <p className="w-full text-3xl">{task.description}</p>
       </div>
