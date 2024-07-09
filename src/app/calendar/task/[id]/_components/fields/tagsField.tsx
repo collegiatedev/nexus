@@ -1,26 +1,58 @@
 "use client";
 
+import React, { useState } from "react";
+import { type TaskFields, FieldFormat } from "./fieldsTable";
+import { TaskTag } from "~/components/taskTag";
+import { TaskTagTypes } from "@prisma/client";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-import { type TaskFields, FieldFormat } from "./fieldsTable";
-import { TaskTag } from "~/components/taskTag";
-import { ReactNode } from "react";
-import React from "react";
+import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
+import { deleteTaskTag } from "~/app/actions";
 
 export const TagsField = ({ task }: TaskFields) => {
+  const tags = task.taskTags.map((tag) => tag.type);
+
   return (
     <FieldFormat label="Tags" taskId={task.id}>
-      <TagFieldPicker>
+      <TagFieldPicker tags={tags} taskId={task.id} />
+    </FieldFormat>
+  );
+};
+
+const TagFieldPicker = ({
+  tags,
+  taskId,
+}: {
+  tags: TaskTagTypes[];
+  taskId: number;
+}) => {
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<TaskTagTypes[]>(tags);
+
+  const remainingTags = React.useMemo(() => {
+    const allTags = Object.values(TaskTagTypes);
+    return allTags.filter((tag) => !selectedTags.includes(tag));
+  }, [selectedTags]);
+
+  return (
+    <Popover onOpenChange={setIsPopoverOpen} modal>
+      <PopoverTrigger asChild>
         <div className="flex flex-wrap gap-3">
-          {task.taskTags.length !== 0 ? (
-            task.taskTags.map((tag) => (
+          {!!selectedTags.length ? (
+            selectedTags.map((tag) => (
               <TaskTag
-                type={tag.type}
-                taskId={task.id}
-                key={`${task.id}-${tag.type}`}
+                key={`${taskId}-${tag}`}
+                type={tag}
+                taskId={taskId}
+                // showDelete={isPopoverOpen}
+                showDelete={true}
+                onDelete={async (taskId, type) => {
+                  setSelectedTags(selectedTags.filter((t) => t !== type));
+                  if (tags.includes(type)) await deleteTaskTag(taskId, type);
+                }}
               />
             ))
           ) : (
@@ -29,19 +61,29 @@ export const TagsField = ({ task }: TaskFields) => {
             </p>
           )}
         </div>
-      </TagFieldPicker>
-    </FieldFormat>
-  );
-};
-
-const TagFieldPicker = ({ children }: { children: ReactNode }) => {
-  return (
-    <Popover>
-      {/* need asChild whenever child div contains button */}
-      <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent align="start">
-        Place content for the popover here.
-      </PopoverContent>
+      </PopoverTrigger>
+      {remainingTags.length > 0 && (
+        <PopoverContent align="start">
+          <Table>
+            <TableBody>
+              {remainingTags.map((tag) => (
+                <TableRow
+                  key={tag}
+                  className="border-hidden hover:bg-muted/50"
+                  onClick={() => {
+                    setSelectedTags([...selectedTags, tag]);
+                  }}
+                >
+                  <TableCell className="p-2">
+                    {/* <TaskTag type={tag} taskId={1} /> */}
+                    {tag}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </PopoverContent>
+      )}
     </Popover>
   );
 };
