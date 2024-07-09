@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { type TaskFields, FieldFormat } from "./fieldsTable";
 import { TaskTag } from "~/components/taskTag";
 import { TaskTagTypes } from "@prisma/client";
@@ -31,6 +31,7 @@ const TagFieldPicker = ({
 }) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [selectedTags, setSelectedTags] = useState<TaskTagTypes[]>(tags);
+  const triggerRef = useRef<HTMLDivElement>(null);
 
   const remainingTags = React.useMemo(() => {
     const allTags = Object.values(TaskTagTypes);
@@ -38,21 +39,22 @@ const TagFieldPicker = ({
   }, [selectedTags]);
 
   return (
-    <Popover onOpenChange={setIsPopoverOpen} modal>
+    <Popover open={isPopoverOpen}>
       <PopoverTrigger asChild>
-        <div className="flex flex-wrap gap-3">
+        <div
+          ref={triggerRef}
+          className="flex flex-wrap gap-3"
+          onClick={() => setIsPopoverOpen(true)}
+        >
           {!!selectedTags.length ? (
             selectedTags.map((tag) => (
               <TaskTag
                 key={`${taskId}-${tag}`}
                 type={tag}
-                taskId={taskId}
-                // showDelete={isPopoverOpen}
-                showDelete={true}
-                onDelete={async (taskId, type) => {
-                  setSelectedTags(selectedTags.filter((t) => t !== type));
-                  if (tags.includes(type)) await deleteTaskTag(taskId, type);
-                }}
+                showDelete={isPopoverOpen}
+                onDelete={async (type) =>
+                  setSelectedTags(selectedTags.filter((t) => t !== type))
+                }
               />
             ))
           ) : (
@@ -62,28 +64,34 @@ const TagFieldPicker = ({
           )}
         </div>
       </PopoverTrigger>
-      {remainingTags.length > 0 && (
-        <PopoverContent align="start">
-          <Table>
-            <TableBody>
-              {remainingTags.map((tag) => (
-                <TableRow
-                  key={tag}
-                  className="border-hidden hover:bg-muted/50"
-                  onClick={() => {
-                    setSelectedTags([...selectedTags, tag]);
-                  }}
-                >
-                  <TableCell className="p-2">
-                    {/* <TaskTag type={tag} taskId={1} /> */}
-                    {tag}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </PopoverContent>
-      )}
+
+      <PopoverContent
+        className={`${!remainingTags.length && "hidden"}`}
+        align="start"
+        onOpenAutoFocus={(event) => event.preventDefault()}
+        onInteractOutside={(event: any) => {
+          // If the click was inside the PopoverTrigger, do not close the popover
+          const trigger = triggerRef.current;
+          if (trigger && trigger.contains(event.target)) return;
+          setIsPopoverOpen(false);
+        }}
+      >
+        <Table>
+          <TableBody>
+            {remainingTags.map((tag) => (
+              <TableRow
+                key={tag}
+                className="border-hidden hover:bg-muted/50"
+                onClick={() => setSelectedTags([...selectedTags, tag])}
+              >
+                <TableCell className="p-2">
+                  <TaskTag type={tag} showDelete={false} />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </PopoverContent>
     </Popover>
   );
 };

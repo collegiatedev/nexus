@@ -38,6 +38,7 @@ export const FieldFormat = ({
   return (
     <TableRow key={`${label}-${taskId}`}>
       <TableCell className="w-1/6">{label}</TableCell>
+      {/* desynced with tagsField.tsx css */}
       <TableCell className={`w-5/6 ${hovering && "hover:bg-muted/50"}`}>
         {children}
       </TableCell>

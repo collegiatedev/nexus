@@ -1,15 +1,15 @@
 import { TaskTagTypes } from "@prisma/client";
 import { X } from "lucide-react";
-import { deleteTaskTag } from "~/app/actions";
 
 export const TaskTag = ({
   type,
-  taskId,
-  showDelete = false,
+  showDelete = true,
+  onDelete,
 }: {
   type: TaskTagTypes;
-  taskId: number;
+  // not a great pattern, but good enough
   showDelete?: boolean;
+  onDelete?: (type: TaskTagTypes) => void;
 }) => {
   const tagColor = getTagColor(type);
 
@@ -19,14 +19,12 @@ export const TaskTag = ({
     >
       {type}
       {showDelete && (
-        <form action={async () => await deleteTaskTag(taskId, type)}>
-          <button
-            type="submit"
-            className="ml-1 flex h-full items-center justify-center"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </form>
+        <button
+          className="ml-1 flex h-full items-center justify-center"
+          onClick={onDelete && (() => onDelete(type))}
+        >
+          <X className="h-4 w-4" />
+        </button>
       )}
     </div>
   );

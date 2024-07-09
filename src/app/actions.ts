@@ -18,5 +18,7 @@ export const syncTaskIsDone = async (taskId: number, isDone: boolean) => {
 
 export const deleteTaskTag = async (taskId: number, type: TaskTagTypes) => {
   await deleteMyTaskTag({ taskId, type });
-  revalidatePath("/tasks/[id]");
+  // don't call server, just have optimistic updates via state hooks
+  // this way it seems a lot more responsive
+  // revalidatePath("/tasks/[id]");
 };
