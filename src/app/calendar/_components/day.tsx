@@ -3,8 +3,8 @@
 import dayjs, { type Dayjs } from "dayjs";
 import React from "react";
 import clsx from "clsx";
-import { DraggableTask } from "./dnd/task";
-import { DroppableColumn } from "./dnd/column";
+import { DraggableTask } from "./dnd/draggable";
+import { DroppableColumn } from "./dnd/droppable";
 import { useMyStore } from "~/lib/store/provider";
 import { ViewportTop } from "~/components/viewportTop";
 import { Container } from "~/types";

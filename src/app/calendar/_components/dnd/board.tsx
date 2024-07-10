@@ -12,7 +12,7 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { createPortal } from "react-dom";
-import { DraggableTask } from "./task";
+import { DraggableTask } from "./draggable";
 import { useMyStore } from "~/lib/store/provider";
 import dayjs from "dayjs";
 import { syncTaskDueDate } from "~/app/actions";

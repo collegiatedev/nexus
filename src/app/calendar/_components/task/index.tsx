@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { BackArrowSVG } from "~/components/icons";
 import { getMyTask } from "~/server/queries";
-import { TaskTitle } from "../task/[id]/_components/title";
-import { FieldsTable } from "../task/[id]/_components/fields/fieldsTable";
+import { FieldsTable } from "./fields/fieldsTable";
+import { TaskTitle } from "./title";
 
 // used in both @modal/(.)/task/[id] and task/[id]
 export const TaskContent = async ({ taskId }: { taskId: string }) => {
