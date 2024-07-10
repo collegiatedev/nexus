@@ -1,11 +1,5 @@
-import {
-  DialogHeader,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-} from "~/components/ui/dialog";
+import { DialogContent } from "~/components/ui/dialog";
 import { RouteChangeComplete } from "~/components/routeChangeComplete";
-import { getMyTask } from "~/server/queries";
 import { TaskContent } from "~/app/calendar/_components/taskContent";
 
 export default async function TaskModal({
