@@ -1,6 +1,6 @@
 import { DialogContent } from "~/components/ui/dialog";
 import { RouteChangeComplete } from "~/components/routeChangeComplete";
-import { TaskContent } from "~/app/calendar/_components/taskContent";
+import { TaskContent } from "~/app/calendar/_components/task";
 
 export default async function TaskModal({
   params: { id },
