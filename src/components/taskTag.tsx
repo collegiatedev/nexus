@@ -29,7 +29,6 @@ export const TaskTag = ({
   );
 };
 
-// change to enum later
 const getTagColor = (type: TaskTagTypes) => {
   switch (type) {
     case TaskTagTypes.Deadline:
