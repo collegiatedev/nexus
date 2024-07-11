@@ -1,6 +1,6 @@
 import { DialogContent } from "~/components/ui/dialog";
 import { RouteChangeComplete } from "~/components/routeChangeComplete";
-import { TaskContent } from "~/app/calendar/_components/task";
+import { TaskPageContent } from "~/app/calendar/_components/task/page";
 
 export default async function TaskModal({
   params: { id },
@@ -11,7 +11,7 @@ export default async function TaskModal({
     <RouteChangeComplete targetUrl={`/calendar/task/${id}`}>
       <DialogContent>
         {/* todo, fix modal pop up issues */}
-        <TaskContent taskId={id} />
+        <TaskPageContent taskId={id} />
       </DialogContent>
     </RouteChangeComplete>
   );

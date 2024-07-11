@@ -2,8 +2,8 @@ import "~/styles/globals.css";
 
 import { GeistSans } from "geist/font/sans";
 import { ClerkProvider } from "@clerk/nextjs";
-import { TopNav } from "./_components/topnav";
-import { MyStoreProvider } from "~/lib/store/provider";
+import { MyStoreProvider } from "~/components/providers/store";
+// import { TopNav } from "./_components/topnav";
 
 export const metadata = {
   title: "Cool Stuff",

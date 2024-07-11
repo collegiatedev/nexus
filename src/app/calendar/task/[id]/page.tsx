@@ -1,9 +1,9 @@
-import { TaskContent } from "../../_components/task";
+import { TaskPageContent } from "../../_components/task/page";
 
 export default async function TaskPage({
   params: { id },
 }: {
   params: { id: string };
 }) {
-  return <TaskContent taskId={id} />;
+  return <TaskPageContent taskId={id} />;
 }

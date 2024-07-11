@@ -4,8 +4,8 @@ import { getMyTask } from "~/server/queries";
 import { FieldsTable } from "./fields/fieldsTable";
 import { TaskTitle } from "./title";
 
-// used in both @modal/(.)/task/[id] and task/[id]
-export const TaskContent = async ({ taskId }: { taskId: string }) => {
+// page.tsx component used in both @modal/(.)/task/[id] and task/[id]
+export const TaskPageContent = async ({ taskId }: { taskId: string }) => {
   const numImgId = Number(taskId);
   if (isNaN(numImgId)) throw new Error("Invalid task id");
   const task = await getMyTask(numImgId);
