@@ -50,10 +50,12 @@ export const MyEditor = () => {
         const rect = range.getBoundingClientRect();
         const editableRect = editableRef.current.getBoundingClientRect();
 
+        // offsets
         const top = -(rect.top - editableRect.top);
-        // get center...
+        // get center using love and black magic
         const left =
-          rect.width / 2 + rect.left - editableRect.left - EDITOR_WIDTH / 2;
+          (rect.width - EDITOR_WIDTH) / 2 + rect.left - editableRect.left;
+
         setTooltipPosition({ top, left });
       }
     }
@@ -62,7 +64,7 @@ export const MyEditor = () => {
   }, [editor, editor.selection, inFocus]);
 
   return (
-    <div>
+    <div className="w-full">
       <TooltipProvider>
         <Tooltip open={isPopoverVisible}>
           <TooltipContent

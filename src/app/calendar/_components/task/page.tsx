@@ -20,7 +20,6 @@ export const TaskPageContent = async ({ taskId }: { taskId: string }) => {
         <div className="flex w-full flex-col gap-4 pl-10">
           <TaskTitle title={task.name as string} taskId={task.id} />
           <FieldsTable task={task} />
-          {/* <p className="w-full text-3xl">{task.description}</p> */}
           <MyEditor />
         </div>
       </div>
