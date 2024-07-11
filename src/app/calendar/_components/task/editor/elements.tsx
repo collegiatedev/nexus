@@ -25,7 +25,11 @@ export const Leaf = (props: RenderLeafProps) => {
   return (
     <span
       {...props.attributes}
-      style={{ fontWeight: props.leaf.bold ? "bold" : "normal" }}
+      style={{
+        fontWeight: props.leaf.bold ? "bold" : "normal",
+        fontStyle: props.leaf.italic ? "italic" : "normal",
+        textDecoration: props.leaf.underline ? "underline" : "none",
+      }}
     >
       {props.children}
     </span>
@@ -42,5 +46,10 @@ type HeadingElement = {
   children: CustomText[];
 };
 export type CustomElement = ParagraphElement | HeadingElement;
-export type FormattedText = { text: string; bold?: true };
+export type FormattedText = {
+  text: string;
+  bold?: true;
+  italic?: true;
+  underline?: true;
+};
 export type CustomText = FormattedText;

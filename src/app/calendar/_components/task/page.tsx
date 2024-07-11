@@ -3,7 +3,7 @@ import { BackArrowSVG } from "~/components/icons";
 import { getMyTask } from "~/server/queries";
 import { FieldsTable } from "./fields/fieldsTable";
 import { TaskTitle } from "./title";
-import { TextEditor } from "./editor";
+import { MyEditor } from "./editor";
 
 // page.tsx component used in both @modal/(.)/task/[id] and task/[id]
 export const TaskPageContent = async ({ taskId }: { taskId: string }) => {
@@ -12,16 +12,18 @@ export const TaskPageContent = async ({ taskId }: { taskId: string }) => {
   const task = await getMyTask(numImgId);
 
   return (
-    <div className="flex flex-col gap-4 p-4">
-      <Link href="/calendar">
-        <BackArrowSVG />
-      </Link>
-      <div className="flex w-full flex-col gap-4 pl-10">
-        <TaskTitle title={task.name as string} taskId={task.id} />
-        <FieldsTable task={task} />
-        {/* <p className="w-full text-3xl">{task.description}</p> */}
-        <TextEditor />
+    <main className="vh-full">
+      <div className="flex flex-col gap-4 p-4">
+        <Link href="/calendar">
+          <BackArrowSVG />
+        </Link>
+        <div className="flex w-full flex-col gap-4 pl-10">
+          <TaskTitle title={task.name as string} taskId={task.id} />
+          <FieldsTable task={task} />
+          {/* <p className="w-full text-3xl">{task.description}</p> */}
+          <MyEditor />
+        </div>
       </div>
-    </div>
+    </main>
   );
 };
