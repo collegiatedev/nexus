@@ -2,7 +2,7 @@
 
 import { Dialog } from "@radix-ui/react-dialog";
 import { useRouter } from "next/navigation";
-import { useMyStore } from "../providers/store";
+import { useMyStore } from "../../lib/store/provider";
 import * as React from "react";
 
 export const ModalContext = ({ children }: { children: React.ReactNode }) => {

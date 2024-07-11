@@ -7,7 +7,7 @@ import { DraggableTask } from "./dnd/draggable";
 import { DroppableColumn } from "./dnd/droppable";
 import { ViewportTop } from "~/components/viewportTop";
 import { Container } from "~/types";
-import { useMyStore } from "~/components/providers/store";
+import { useMyStore } from "~/lib/store/provider";
 
 export const Day = ({ dayId }: { dayId: string }) => {
   const dayContainer = useMyStore((state) => state.getContainer(dayId));

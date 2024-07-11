@@ -2,7 +2,7 @@
 
 import { Bold, Italic, Underline } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "~/components/ui/toggle-group";
-import { useEditor } from "~/components/providers/editor";
+import { useEditor } from "~/app/calendar/_components/task/editor/provider";
 import { EditorCommands } from "./commands";
 
 export const EditorToolbar = () => {

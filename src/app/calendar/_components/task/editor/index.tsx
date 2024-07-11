@@ -2,7 +2,7 @@
 
 import React, { useCallback } from "react";
 import { Editable, RenderElementProps, RenderLeafProps } from "slate-react";
-import { useEditor } from "~/components/providers/editor";
+import { useEditor } from "~/app/calendar/_components/task/editor/provider";
 import { EditorCommands } from "./commands";
 import { Leaf, useRenderElement } from "./elements";
 import { EditorToolbar } from "./toolbar";

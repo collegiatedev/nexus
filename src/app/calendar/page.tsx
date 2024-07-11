@@ -5,7 +5,7 @@ import { Calendar } from "./_components/calendar";
 import { MyTasks } from "~/server/queries";
 import { myTasksToDnDProps } from "~/lib/store/dnd";
 import { useEffect } from "react";
-import { useMyStore } from "~/components/providers/store";
+import { useMyStore } from "~/lib/store/provider";
 
 export default async function Home() {
   return (

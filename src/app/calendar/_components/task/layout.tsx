@@ -1,5 +1,5 @@
 import { Descendant } from "slate";
-import { EditorProvider } from "~/components/providers/editor";
+import { EditorProvider } from "~/app/calendar/_components/task/editor/provider";
 
 // layout.tsx component used in both @modal/(.)/task/[id] and task/[id]
 export const TaskLayout = async ({

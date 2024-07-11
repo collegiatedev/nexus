@@ -7,7 +7,7 @@ import { X } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { useRouter } from "next/navigation";
 import { CloseModal } from "./modal";
-import { useMyStore } from "../providers/store";
+import { useMyStore } from "../../lib/store/provider";
 
 const Dialog = DialogPrimitive.Root;
 
