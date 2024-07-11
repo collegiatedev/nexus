@@ -1,5 +1,12 @@
 // used by dnd store
-import { TaskTagTypes } from "@prisma/client";
+import type { TaskTagTypes } from "@prisma/client";
+import type { CustomEditor } from "./app/calendar/_components/task/editor/commands";
+import type {
+  CustomElement,
+  CustomText,
+} from "./app/calendar/_components/task/editor/elements";
+
+// types for dnd store
 export type Column = {
   id: string;
   date?: Date;
@@ -17,3 +24,12 @@ export type Container = {
   column: Column;
   tasks: Task[];
 };
+
+// extend editor
+declare module "slate" {
+  interface CustomTypes {
+    Editor: CustomEditor;
+    Element: CustomElement;
+    Text: CustomText;
+  }
+}

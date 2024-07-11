@@ -5,6 +5,7 @@ import { Editable, RenderElementProps, RenderLeafProps } from "slate-react";
 import { useEditor } from "~/components/providers/editor";
 import { EditorCommands } from "./commands";
 import { Leaf, useRenderElement } from "./elements";
+import { EditorToolbar } from "./toolbar";
 
 export const TextEditor = () => {
   const { editor } = useEditor();
@@ -19,24 +20,7 @@ export const TextEditor = () => {
 
   return (
     <>
-      <div>
-        <button
-          onMouseDown={(event) => {
-            event.preventDefault();
-            EditorCommands.toggleBoldMark(editor);
-          }}
-        >
-          Bold
-        </button>
-        <button
-          onMouseDown={(event) => {
-            event.preventDefault();
-            EditorCommands.toggleCodeBlock(editor);
-          }}
-        >
-          Code
-        </button>
-      </div>
+      <EditorToolbar />
       <Editable
         className="w-full text-3xl"
         renderElement={renderElement}
@@ -44,14 +28,7 @@ export const TextEditor = () => {
         onKeyDown={(event) => {
           if (!event.ctrlKey) return;
 
-          // Replace the `onKeyDown` logic with our new commands.
           switch (event.key) {
-            case "`": {
-              event.preventDefault();
-              EditorCommands.toggleCodeBlock(editor);
-              break;
-            }
-
             case "b": {
               event.preventDefault();
               EditorCommands.toggleBoldMark(editor);

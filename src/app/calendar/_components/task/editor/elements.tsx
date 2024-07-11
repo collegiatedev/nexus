@@ -1,12 +1,12 @@
 import type { RenderElementProps, RenderLeafProps } from "slate-react";
 
-const CodeElement = (props: RenderElementProps) => {
-  return (
-    <pre {...props.attributes}>
-      <code>{props.children}</code>
-    </pre>
-  );
-};
+// const CodeElement = (props: RenderElementProps) => {
+//   return (
+//     <pre {...props.attributes}>
+//       <code>{props.children}</code>
+//     </pre>
+//   );
+// };
 
 const DefaultElement = (props: RenderElementProps) => {
   return <p {...props.attributes}>{props.children}</p>;
@@ -14,8 +14,8 @@ const DefaultElement = (props: RenderElementProps) => {
 
 export const useRenderElement = (props: RenderElementProps) => {
   switch (props.element.type) {
-    case "code":
-      return <CodeElement {...props} />;
+    // case "code":
+    //   return <CodeElement {...props} />;
     default:
       return <DefaultElement {...props} />;
   }
@@ -31,3 +31,16 @@ export const Leaf = (props: RenderLeafProps) => {
     </span>
   );
 };
+
+type ParagraphElement = {
+  type: "paragraph";
+  children: CustomText[];
+};
+type HeadingElement = {
+  type: "heading";
+  level: number;
+  children: CustomText[];
+};
+export type CustomElement = ParagraphElement | HeadingElement;
+export type FormattedText = { text: string; bold?: true };
+export type CustomText = FormattedText;

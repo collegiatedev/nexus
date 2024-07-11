@@ -1,5 +1,8 @@
-import { Editor, Transforms, Element } from "slate";
-import { CustomEditor } from "~/components/providers/editor";
+import { Editor, Transforms, Element, BaseEditor } from "slate";
+import { HistoryEditor } from "slate-history";
+import { ReactEditor } from "slate-react";
+
+export type CustomEditor = BaseEditor & ReactEditor & HistoryEditor;
 
 export const EditorCommands = {
   isBoldMarkActive(editor: CustomEditor) {
@@ -7,13 +10,13 @@ export const EditorCommands = {
     return marks ? marks.bold === true : false;
   },
 
-  isCodeBlockActive(editor: CustomEditor) {
-    const [match] = Editor.nodes(editor, {
-      match: (n) => Element.isElement(n) && n.type === "code",
-    });
+  // isCodeBlockActive(editor: CustomEditor) {
+  //   const [match] = Editor.nodes(editor, {
+  //     match: (n) => Element.isElement(n) && n.type === "code",
+  //   });
 
-    return !!match;
-  },
+  //   return !!match;
+  // },
 
   toggleBoldMark(editor: CustomEditor) {
     const isActive = EditorCommands.isBoldMarkActive(editor);
@@ -24,12 +27,12 @@ export const EditorCommands = {
     }
   },
 
-  toggleCodeBlock(editor: CustomEditor) {
-    const isActive = EditorCommands.isCodeBlockActive(editor);
-    Transforms.setNodes(
-      editor,
-      { type: isActive ? undefined : "code" },
-      { match: (n) => Element.isElement(n) && Editor.isBlock(editor, n) },
-    );
-  },
+  // toggleCodeBlock(editor: CustomEditor) {
+  //   const isActive = EditorCommands.isCodeBlockActive(editor);
+  //   Transforms.setNodes(
+  //     editor,
+  //     { type: isActive ? undefined : "code" },
+  //     { match: (n) => Element.isElement(n) && Editor.isBlock(editor, n) },
+  //   );
+  // },
 };

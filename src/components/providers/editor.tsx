@@ -1,41 +1,9 @@
 "use client";
 import { useContext, ReactNode, useState, createContext, useMemo } from "react";
 import { Descendant, createEditor } from "slate";
+import { withHistory } from "slate-history";
 import { withReact, Slate } from "slate-react";
-import { BaseEditor } from "slate";
-import { ReactEditor } from "slate-react";
-import { HistoryEditor, withHistory } from "slate-history";
-
-// type definitions
-export type CustomEditor = BaseEditor & ReactEditor & HistoryEditor;
-
-export type ParagraphElement = {
-  type: "paragraph";
-  children: CustomText[];
-};
-
-export type HeadingElement = {
-  type: "heading";
-  level: number;
-  children: CustomText[];
-};
-
-export type CodeElement = {
-  type: "code";
-  children: CustomText[];
-};
-
-export type CustomElement = ParagraphElement | HeadingElement | CodeElement;
-export type FormattedText = { text: string; bold?: true };
-export type CustomText = FormattedText;
-
-declare module "slate" {
-  interface CustomTypes {
-    Editor: CustomEditor;
-    Element: CustomElement;
-    Text: CustomText;
-  }
-}
+import { CustomEditor } from "~/app/calendar/_components/task/editor/commands";
 
 // Context, used in layout.tsx
 
