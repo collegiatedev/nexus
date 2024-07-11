@@ -9,7 +9,7 @@ import {
   useSlate,
 } from "slate-react";
 import { Editor, Range } from "slate";
-import { EditorCommands } from "./commands";
+import { CustomEditor, EditorCommands } from "./commands";
 import { Leaf, useRenderElement } from "./elements";
 import { EDITOR_WIDTH, EditorToolbar } from "./toolbar";
 import {
@@ -93,17 +93,19 @@ export const MyEditor = () => {
                   switch (event.key) {
                     case "b": {
                       event.preventDefault();
-                      EditorCommands.toggleBoldMark(editor);
+                      EditorCommands.toggleBoldMark(editor as CustomEditor);
                       break;
                     }
                     case "i": {
                       event.preventDefault();
-                      EditorCommands.toggleItalicMark(editor);
+                      EditorCommands.toggleItalicMark(editor as CustomEditor);
                       break;
                     }
                     case "u": {
                       event.preventDefault();
-                      EditorCommands.toggleUnderlineMark(editor);
+                      EditorCommands.toggleUnderlineMark(
+                        editor as CustomEditor,
+                      );
                       break;
                     }
                   }
