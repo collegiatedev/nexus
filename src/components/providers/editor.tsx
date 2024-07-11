@@ -1,10 +1,10 @@
 "use client";
-import { useContext, ReactNode, useState, createContext } from "react";
+import { useContext, ReactNode, useState, createContext, useMemo } from "react";
 import { Descendant, createEditor } from "slate";
 import { withReact, Slate } from "slate-react";
 import { BaseEditor } from "slate";
 import { ReactEditor } from "slate-react";
-import { HistoryEditor } from "slate-history";
+import { HistoryEditor, withHistory } from "slate-history";
 
 // type definitions
 export type CustomEditor = BaseEditor & ReactEditor & HistoryEditor;
@@ -58,7 +58,7 @@ export const EditorProvider = ({
   children: ReactNode;
   initialValue: Descendant[];
 }) => {
-  const [editor] = useState(() => withReact(createEditor()));
+  const editor = useMemo(() => withHistory(withReact(createEditor())), []);
 
   return (
     <EditorContext.Provider value={{ editor }}>
