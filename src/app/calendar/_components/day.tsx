@@ -5,9 +5,9 @@ import React from "react";
 import clsx from "clsx";
 import { DraggableTask } from "./dnd/draggable";
 import { DroppableColumn } from "./dnd/droppable";
-import { useMyStore } from "~/lib/store/provider";
 import { ViewportTop } from "~/components/viewportTop";
 import { Container } from "~/types";
+import { useMyStore } from "~/components/providers/store";
 
 export const Day = ({ dayId }: { dayId: string }) => {
   const dayContainer = useMyStore((state) => state.getContainer(dayId));

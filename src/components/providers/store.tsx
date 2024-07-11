@@ -1,11 +1,11 @@
 "use client";
 
 import { create, useStore } from "zustand";
-import { createDnDSlice, DnDSlice } from "./dnd";
 import { createContext, ReactNode, useRef, useContext } from "react";
-import { createModalSlice, ModalSlice } from "./modal";
-import { createMonthSlice, MonthSlice } from "./month";
-import { createHoveringSlice, HoveringSlice } from "./hovering";
+import { DnDSlice, createDnDSlice } from "~/lib/store/dnd";
+import { HoveringSlice, createHoveringSlice } from "~/lib/store/hovering";
+import { ModalSlice, createModalSlice } from "~/lib/store/modal";
+import { MonthSlice, createMonthSlice } from "~/lib/store/month";
 
 // add to args as needed
 type AllSlices = DnDSlice & ModalSlice & MonthSlice & HoveringSlice;

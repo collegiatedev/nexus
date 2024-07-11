@@ -1,7 +1,7 @@
 "use client";
 
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
-import { useMyStore } from "~/lib/store/provider";
+import { useMyStore } from "~/components/providers/store";
 
 interface ColumnProps {
   columnId: string;

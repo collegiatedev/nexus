@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { type Dayjs } from "dayjs";
 import { Day } from "./day";
 import { dateAsId } from "~/lib/utils";
-import { useMyStore } from "~/lib/store/provider";
+import { useMyStore } from "~/components/providers/store";
 
 export const Month = ({ month }: { month: Dayjs[][] }) => {
   const [isReady, setIsReady] = useState(false);

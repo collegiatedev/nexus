@@ -2,7 +2,42 @@
 import { useContext, ReactNode, useState, createContext } from "react";
 import { Descendant, createEditor } from "slate";
 import { withReact, Slate } from "slate-react";
-import { CustomEditor } from "~/types";
+import { BaseEditor } from "slate";
+import { ReactEditor } from "slate-react";
+import { HistoryEditor } from "slate-history";
+
+// type definitions
+export type CustomEditor = BaseEditor & ReactEditor & HistoryEditor;
+
+export type ParagraphElement = {
+  type: "paragraph";
+  children: CustomText[];
+};
+
+export type HeadingElement = {
+  type: "heading";
+  level: number;
+  children: CustomText[];
+};
+
+export type CodeElement = {
+  type: "code";
+  children: CustomText[];
+};
+
+export type CustomElement = ParagraphElement | HeadingElement | CodeElement;
+export type FormattedText = { text: string; bold?: true };
+export type CustomText = FormattedText;
+
+declare module "slate" {
+  interface CustomTypes {
+    Editor: CustomEditor;
+    Element: CustomElement;
+    Text: CustomText;
+  }
+}
+
+// Context, used in layout.tsx
 
 interface EditorContextType {
   editor: CustomEditor;
@@ -16,7 +51,6 @@ export const useEditor = () => {
   return context;
 };
 
-// Used in layout.tsx
 export const EditorProvider = ({
   children,
   initialValue,

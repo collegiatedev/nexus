@@ -5,7 +5,7 @@ import { DnDBoard } from "./dnd/board";
 import { Month } from "./month";
 import { useEffect } from "react";
 import React from "react";
-import { useMyStore } from "~/lib/store/provider";
+import { useMyStore } from "~/components/providers/store";
 
 // can't use sticky since parent have no fixed height
 // so need to define a fixed height for navbar, fixed positioning

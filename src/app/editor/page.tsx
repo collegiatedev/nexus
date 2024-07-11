@@ -4,7 +4,7 @@ import React, { useCallback } from "react";
 import { useEditor } from "./provider";
 import { Editable, RenderElementProps, RenderLeafProps } from "slate-react";
 import { Transforms, Element, Editor } from "slate";
-import { CustomEditor } from "~/types";
+import { type CustomEditor } from "~/components/providers/editor";
 
 const MyEditor = {
   isBoldMarkActive(editor: CustomEditor) {

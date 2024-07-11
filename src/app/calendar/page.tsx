@@ -3,9 +3,9 @@
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { Calendar } from "./_components/calendar";
 import { MyTasks } from "~/server/queries";
-import { useMyStore } from "~/lib/store/provider";
 import { myTasksToDnDProps } from "~/lib/store/dnd";
 import { useEffect } from "react";
+import { useMyStore } from "~/components/providers/store";
 
 export default async function Home() {
   return (
@@ -22,6 +22,8 @@ export default async function Home() {
   );
 }
 
+// loads into store, needed cuz client vs server component
+// used in layout.tsx
 export const LoadDnDState = ({
   myTasks,
   children,

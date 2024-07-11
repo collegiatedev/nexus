@@ -13,9 +13,9 @@ import {
 } from "@dnd-kit/core";
 import { createPortal } from "react-dom";
 import { DraggableTask } from "./draggable";
-import { useMyStore } from "~/lib/store/provider";
 import dayjs from "dayjs";
 import { syncTaskDueDate } from "~/app/actions";
+import { useMyStore } from "~/components/providers/store";
 
 export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
   // const [draggingTaskId, setDraggingTaskId] = useState<string | null>(null);

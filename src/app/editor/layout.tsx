@@ -1,6 +1,6 @@
 import "~/styles/globals.css";
 import { Descendant } from "slate";
-import { EditorProvider } from "./provider";
+import { EditorProvider } from "~/components/providers/editor";
 
 export const metadata = {
   title: "Editor",
