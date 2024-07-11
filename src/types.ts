@@ -36,10 +36,13 @@ export type HeadingElement = {
   children: CustomText[];
 };
 
-export type CustomElement = ParagraphElement | HeadingElement;
+export type CodeElement = {
+  type: "code";
+  children: CustomText[];
+};
 
+export type CustomElement = ParagraphElement | HeadingElement | CodeElement;
 export type FormattedText = { text: string; bold?: true };
-
 export type CustomText = FormattedText;
 
 declare module "slate" {
