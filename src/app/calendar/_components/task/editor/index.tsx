@@ -1,33 +1,22 @@
 "use client";
 
-import React, { useCallback, useRef, useState } from "react";
-import {
-  Editable,
-  RenderElementProps,
-  RenderLeafProps,
-  useSlate,
-} from "slate-react";
-import { Leaf, useKeyDown, useRenderElement } from "./elements";
+import React, { useRef, useState } from "react";
+import { Editable, useSlate } from "slate-react";
 import { EditorToolbar } from "./toolbar";
 import {
   Tooltip,
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { useOnDOMBeforeInput } from "./shortcuts";
+import { useKeyDown, useRenderLeaf } from "./leaf";
+import { useRenderElement } from "./elements";
 
 export const MyEditor = () => {
   const editor = useSlate();
   const [isPopoverVisible, setPopoverVisible] = useState(false);
 
   const editableRef = useRef<HTMLDivElement | null>(null);
-
-  const renderElement = useCallback(
-    (props: RenderElementProps) => useRenderElement(props),
-    [],
-  );
-  const renderLeaf = useCallback((props: RenderLeafProps) => {
-    return <Leaf {...props} />;
-  }, []);
 
   return (
     <div className="w-full">
@@ -42,10 +31,10 @@ export const MyEditor = () => {
               <Editable
                 placeholder="Writing something, or type '/' for commands"
                 className="w-full cursor-text text-left text-3xl outline-none"
-                renderElement={renderElement}
-                renderLeaf={renderLeaf}
+                renderElement={useRenderElement()}
+                renderLeaf={useRenderLeaf()}
                 onKeyDown={(event) => useKeyDown(event, editor)}
-                style={{ border: "none" }}
+                onDOMBeforeInput={(_event) => useOnDOMBeforeInput(editor)}
               />
             </TooltipTrigger>
           </div>
