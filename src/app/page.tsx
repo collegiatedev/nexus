@@ -14,7 +14,7 @@ export default async function Home() {
         {/* <Calendar /> */}
         <div className="flex h-dvh flex-col items-center justify-center text-4xl">
           <p>Pages:</p>
-          <Link href="/calendar" className="text-blue-500">
+          <Link href="/calendar" className="text-blue-500 hover:underline">
             Calendar
           </Link>
         </div>
