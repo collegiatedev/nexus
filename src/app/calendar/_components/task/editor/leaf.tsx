@@ -21,10 +21,15 @@ export const useRenderLeaf = () => {
   return useCallback((props: RenderLeafProps) => <Leaf {...props} />, []);
 };
 
-export const useKeyDown = (
-  event: React.KeyboardEvent<HTMLDivElement>,
-  editor: CustomEditor,
-) => {
+export const useKeyDown = ({
+  event,
+  editor,
+  setShowCommandMenu,
+}: {
+  event: React.KeyboardEvent<HTMLDivElement>;
+  editor: CustomEditor;
+  setShowCommandMenu: (value: boolean) => void;
+}) => {
   if (!event.ctrlKey && !event.metaKey) return;
   switch (event.key) {
     case "b": {

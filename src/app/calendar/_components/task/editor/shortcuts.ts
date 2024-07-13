@@ -23,6 +23,17 @@ export const withShortcuts = (editor: CustomEditor) => {
   editor.insertText = (text) => {
     const { selection } = editor;
 
+    if (
+      selection &&
+      Range.isCollapsed(selection) &&
+      (text.endsWith("/") || text.endsWith("/ "))
+    ) {
+      console.log("show menu");
+    } else {
+      // (text.endsWith("/") || text.endsWith("/ "))
+      // console.log("close menu")
+    }
+
     if (text.endsWith(" ") && selection && Range.isCollapsed(selection)) {
       const { anchor } = selection;
       const block = Editor.above(editor, {
@@ -33,27 +44,19 @@ export const withShortcuts = (editor: CustomEditor) => {
       const range = { anchor, focus: start };
       const beforeText = Editor.string(editor, range) + text.slice(0, -1);
       const type = SHORTCUTS[beforeText];
-
       if (type) {
         Transforms.select(editor, range);
 
-        if (!Range.isCollapsed(range)) {
-          Transforms.delete(editor);
-        }
+        if (!Range.isCollapsed(range)) Transforms.delete(editor);
 
+        // todo, clean up this logic
         const newProperties: Partial<SlateElement> = {
           type: type === "list-item" ? "list-item" : "heading",
           level: type.startsWith("heading")
             ? beforeText.split("#").length - 1
             : undefined,
         };
-        Transforms.setNodes<SlateElement>(editor, newProperties, {
-          match: (n) => SlateElement.isElement(n) && Editor.isBlock(editor, n),
-        });
 
-        // const newProperties: Partial<SlateElement> = {
-        //   type: type as SlateElement["type"],
-        // }
         Transforms.setNodes<SlateElement>(editor, newProperties, {
           match: (n) => SlateElement.isElement(n) && Editor.isBlock(editor, n),
         });
