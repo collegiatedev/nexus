@@ -10,7 +10,7 @@ import {
 } from "~/components/ui/tooltip";
 import { useOnDOMBeforeInput } from "./shortcuts";
 import { useKeyDown, useRenderLeaf } from "./leaf";
-import { useRenderElement } from "./elements";
+import { useRenderElement } from "./render";
 
 export const MyEditor = () => {
   const editor = useSlate();
@@ -29,7 +29,6 @@ export const MyEditor = () => {
           <div ref={editableRef}>
             <TooltipTrigger className="w-full">
               <Editable
-                placeholder="Writing something, or type '/' for commands"
                 className="w-full cursor-text text-left text-3xl outline-none"
                 renderElement={useRenderElement()}
                 renderLeaf={useRenderLeaf()}

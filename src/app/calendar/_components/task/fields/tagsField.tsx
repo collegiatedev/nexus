@@ -89,6 +89,7 @@ const TagFieldPicker = ({
             {remainingTags.map((tag) => (
               <TableRow
                 key={tag}
+                // desynced with fieldsTable.tsx
                 className="border-hidden hover:bg-muted/50"
                 onClick={() => setSelectedTags([...selectedTags, tag])}
               >

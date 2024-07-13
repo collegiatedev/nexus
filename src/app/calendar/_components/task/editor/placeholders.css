@@ -1,0 +1,24 @@
+.selected-empty-element {
+  position: relative;
+}
+.selected-empty-element:after,
+.selected-empty-element-heading-h1:after,
+.selected-empty-element-heading-h2:after,
+.selected-empty-element-heading-h3:after {
+  color: #aaa;
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
+}
+.selected-empty-element:after {
+  content: "Write something, or type '/' for commands";
+}
+.selected-empty-element-heading-h1:after {
+  content: "Heading 1";
+}
+.selected-empty-element-heading-h2:after {
+  content: "Heading 2";
+}
+.selected-empty-element-heading-h3:after {
+  content: "Heading 3";
+}

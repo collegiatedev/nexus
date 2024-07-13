@@ -6,20 +6,11 @@ import { CustomElement } from "./elements";
 export type CustomEditor = BaseEditor & ReactEditor & HistoryEditor;
 
 export const EditorCommands = {
-  // bold, italic, underline
+  // bold
   isBoldMarkActive(editor: CustomEditor) {
     const marks = Editor.marks(editor);
     return marks ? marks.bold === true : false;
   },
-  isItalicMarkActive(editor: CustomEditor) {
-    const marks = Editor.marks(editor);
-    return marks ? marks.italic === true : false;
-  },
-  isUnderlineMarkActive(editor: CustomEditor) {
-    const marks = Editor.marks(editor);
-    return marks ? marks.underline === true : false;
-  },
-
   toggleBoldMark(editor: CustomEditor) {
     const isActive = EditorCommands.isBoldMarkActive(editor);
     if (isActive) {
@@ -28,6 +19,12 @@ export const EditorCommands = {
       Editor.addMark(editor, "bold", true);
     }
   },
+
+  // italic
+  isItalicMarkActive(editor: CustomEditor) {
+    const marks = Editor.marks(editor);
+    return marks ? marks.italic === true : false;
+  },
   toggleItalicMark(editor: CustomEditor) {
     const isActive = EditorCommands.isItalicMarkActive(editor);
     if (isActive) {
@@ -35,6 +32,12 @@ export const EditorCommands = {
     } else {
       Editor.addMark(editor, "italic", true);
     }
+  },
+
+  // underline
+  isUnderlineMarkActive(editor: CustomEditor) {
+    const marks = Editor.marks(editor);
+    return marks ? marks.underline === true : false;
   },
   toggleUnderlineMark(editor: CustomEditor) {
     const isActive = EditorCommands.isUnderlineMarkActive(editor);
@@ -45,7 +48,7 @@ export const EditorCommands = {
     }
   },
 
-  // heading
+  // headings
   isHeadingActive(editor: CustomEditor, level: number) {
     const [match] = Editor.nodes(editor, {
       match: (n) =>
