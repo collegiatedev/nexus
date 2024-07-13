@@ -19,6 +19,7 @@ export const SHORTCUTS: { [key: string]: string } = {
 };
 export const withShortcuts = (editor: CustomEditor) => {
   const { insertText, deleteBackward } = editor;
+
   editor.insertText = (text) => {
     const { selection } = editor;
 
@@ -41,11 +42,18 @@ export const withShortcuts = (editor: CustomEditor) => {
         }
 
         const newProperties: Partial<SlateElement> = {
-          type: type === "bulleted-list" ? "bulleted-list" : "heading",
+          type: type === "list-item" ? "list-item" : "heading",
           level: type.startsWith("heading")
             ? beforeText.split("#").length - 1
             : undefined,
         };
+        Transforms.setNodes<SlateElement>(editor, newProperties, {
+          match: (n) => SlateElement.isElement(n) && Editor.isBlock(editor, n),
+        });
+
+        // const newProperties: Partial<SlateElement> = {
+        //   type: type as SlateElement["type"],
+        // }
         Transforms.setNodes<SlateElement>(editor, newProperties, {
           match: (n) => SlateElement.isElement(n) && Editor.isBlock(editor, n),
         });
@@ -59,7 +67,7 @@ export const withShortcuts = (editor: CustomEditor) => {
             match: (n) =>
               !Editor.isEditor(n) &&
               SlateElement.isElement(n) &&
-              n.type === "bulleted-list",
+              n.type === "list-item",
           });
         }
 

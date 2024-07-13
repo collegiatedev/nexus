@@ -22,9 +22,13 @@ type HeadingElement = {
   level: number;
   children: CustomText[];
 };
-type BulletedListElement = {
+export type BulletedListElement = {
   type: "bulleted-list";
   align?: string;
+  children: Descendant[];
+};
+type ListItemElement = {
+  type: "list-item";
   children: Descendant[];
 };
 type ChecklistItemElement = {
@@ -36,6 +40,7 @@ export type CustomElement =
   | ParagraphElement
   | HeadingElement
   | BulletedListElement
+  | ListItemElement
   | ChecklistItemElement;
 type FormattedText = {
   text: string;
@@ -51,6 +56,8 @@ export const chooseElement = (props: RenderElementProps) => {
       return <HeadingElement {...props} />;
     case "bulleted-list":
       return <BulletedListElement {...props} />;
+    case "list-item":
+      return <ListItemElement {...props} />;
     case "check-list-item":
       return <CheckListItemElement {...props} />;
     default:
@@ -94,7 +101,6 @@ const DefaultElement = (props: RenderElementProps) => {
 
 const HeadingElement = (props: RenderElementProps) => {
   const level = (props.element as HeadingElement).level;
-
   switch (level) {
     case 1:
       return (
@@ -130,6 +136,9 @@ const HeadingElement = (props: RenderElementProps) => {
 
 const BulletedListElement = (props: RenderElementProps) => {
   return <ul {...props.attributes}>{props.children}</ul>;
+};
+const ListItemElement = (props: RenderElementProps) => {
+  return <li {...props.attributes}>{props.children}</li>;
 };
 
 const CheckListItemElement = (props: RenderElementProps) => {
