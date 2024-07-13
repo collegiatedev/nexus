@@ -1,6 +1,17 @@
-import { useSelected, useSlate, type RenderElementProps } from "slate-react";
-import { Descendant } from "slate";
-import { Editor as SlateEditor } from "slate";
+import {
+  ReactEditor,
+  useReadOnly,
+  useSelected,
+  useSlate,
+  useSlateStatic,
+  type RenderElementProps,
+} from "slate-react";
+import {
+  Descendant,
+  Element as SlateElement,
+  Editor as SlateEditor,
+  Transforms,
+} from "slate";
 
 type ParagraphElement = {
   type: "paragraph";
@@ -16,11 +27,16 @@ type BulletedListElement = {
   align?: string;
   children: Descendant[];
 };
+type ChecklistItemElement = {
+  type: "check-list-item";
+  checked: boolean;
+  children: CustomText[];
+};
 export type CustomElement =
   | ParagraphElement
   | HeadingElement
-  | BulletedListElement;
-
+  | BulletedListElement
+  | ChecklistItemElement;
 type FormattedText = {
   text: string;
   bold?: true;
@@ -35,6 +51,8 @@ export const chooseElement = (props: RenderElementProps) => {
       return <HeadingElement {...props} />;
     case "bulleted-list":
       return <BulletedListElement {...props} />;
+    case "check-list-item":
+      return <CheckListItemElement {...props} />;
     default:
       return <DefaultElement {...props} />;
   }
@@ -112,4 +130,40 @@ const HeadingElement = (props: RenderElementProps) => {
 
 const BulletedListElement = (props: RenderElementProps) => {
   return <ul {...props.attributes}>{props.children}</ul>;
+};
+
+const CheckListItemElement = (props: RenderElementProps) => {
+  if (props.element.type !== "check-list-item") return null;
+
+  const { attributes, children, element } = props;
+  const editor = useSlateStatic();
+  const readOnly = useReadOnly();
+  const { checked } = element;
+
+  return (
+    <div {...attributes} className="flex flex-row items-center [&+&]:mt-0">
+      <span contentEditable={false} className="mr-3">
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={(event) => {
+            const path = ReactEditor.findPath(editor, element);
+            const newProperties: Partial<SlateElement> = {
+              checked: event.target.checked,
+            };
+            Transforms.setNodes(editor, newProperties, { at: path });
+          }}
+        />
+      </span>
+      <span
+        contentEditable={!readOnly}
+        suppressContentEditableWarning
+        className={`flex-1 ${
+          checked ? "line-through opacity-[0.666]" : "no-underline opacity-100"
+        } focus:outline-none ${setPlaceholder(props)} min-w-[1px]`}
+      >
+        {children}
+      </span>
+    </div>
+  );
 };

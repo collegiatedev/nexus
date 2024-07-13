@@ -17,6 +17,16 @@ export const TaskLayout = async ({
       type: "paragraph",
       children: [{ text: "A second line of text in a different paragraph." }],
     },
+    {
+      type: "check-list-item",
+      checked: true,
+      children: [{ text: "Slide to the right." }],
+    },
+    {
+      type: "check-list-item",
+      checked: false,
+      children: [{ text: "Criss-cross." }],
+    },
   ];
 
   return <SlateProvider initialValue={initialValue}>{children}</SlateProvider>;

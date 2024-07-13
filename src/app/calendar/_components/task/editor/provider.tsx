@@ -4,6 +4,7 @@ import { Descendant, createEditor } from "slate";
 import { withHistory } from "slate-history";
 import { withReact, Slate } from "slate-react";
 import { withShortcuts } from "./shortcuts";
+import { withChecklists } from "./checklists";
 
 // Provider, used in layout.tsx
 // Setup this way cuz we need this to be a client component, layout retrieves as server component
@@ -16,7 +17,7 @@ export const SlateProvider = ({
   initialValue: Descendant[];
 }) => {
   const editor = useMemo(
-    () => withShortcuts(withReact(withHistory(createEditor()))),
+    () => withChecklists(withShortcuts(withReact(withHistory(createEditor())))),
     [],
   );
 

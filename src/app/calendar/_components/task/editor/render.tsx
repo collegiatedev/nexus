@@ -1,7 +1,7 @@
-import { RenderElementProps, useFocused, useSelected } from "slate-react";
+import { RenderElementProps } from "slate-react";
 import { useCallback, useState } from "react";
-import { PlusIcon } from "lucide-react";
 import { chooseElement } from "./elements";
+import { PlusIcon } from "lucide-react";
 
 export const useRenderElement = () => {
   return useCallback(
@@ -12,27 +12,25 @@ export const useRenderElement = () => {
 
 const RenderedElement = (props: RenderElementProps) => {
   const [isHovering, setIsHovering] = useState(false);
-  const selected = useSelected();
-  const focused = useFocused();
 
-  const hovering =
-    isHovering || (selected && focused)
-      ? "opacity-80 pointer-events-auto"
-      : "opacity-0 pointer-events-none";
+  const showButton = isHovering
+    ? "opacity-80 pointer-events-auto"
+    : "opacity-0 pointer-events-none";
 
   return (
     <div
       className="flex items-center"
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
+      onPointerEnter={() => setIsHovering(true)}
+      onPointerOut={() => setIsHovering(false)}
     >
       <div
-        className={`mr-2 transition-opacity duration-200 ${hovering} cursor-pointer`}
+        className={`${showButton} mr-2 cursor-pointer`}
         contentEditable={false}
       >
         <PlusIcon />
       </div>
-      {chooseElement(props)}
+      {/* min-w-[1px] ensures that blinking typing cursor is always present */}
+      <div className="min-w-[1px]">{chooseElement(props)}</div>
     </div>
   );
 };
