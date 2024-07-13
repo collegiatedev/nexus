@@ -20,8 +20,8 @@ const RenderedElement = (props: RenderElementProps) => {
   return (
     <div
       className="flex items-center"
-      onPointerEnter={() => setIsHovering(true)}
       onPointerOut={() => setIsHovering(false)}
+      onPointerMove={() => setIsHovering(true)}
     >
       <div
         className={`${showButton} mr-2 cursor-pointer`}
