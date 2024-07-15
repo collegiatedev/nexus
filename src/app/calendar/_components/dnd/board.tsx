@@ -12,7 +12,7 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { createPortal } from "react-dom";
-import { DraggableTask } from "./draggable";
+import { DraggableTaskCard } from "./draggable";
 import dayjs from "dayjs";
 import { syncTaskDueDate } from "~/app/actions";
 import { useMyStore } from "~/lib/store/provider";
@@ -104,7 +104,7 @@ export const DnDBoard = ({ children }: { children: React.ReactNode }) => {
               {draggingTaskId.current &&
                 (() => {
                   const task = getTask(draggingTaskId.current);
-                  return task ? <DraggableTask task={task} /> : null;
+                  return task ? <DraggableTaskCard task={task} /> : null;
                 })()}
             </DragOverlay>,
             document.body,

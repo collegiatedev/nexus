@@ -2,6 +2,7 @@
 
 import { Filter, Search } from "lucide-react";
 import { useRef, useState } from "react";
+import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import {
   Select,
@@ -88,7 +89,8 @@ const TaskToggle = () => {
 const SearchControl = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  const [searchValue, setSearchValue] = useState("");
+  const { setTaskSearch, getTaskSearch } = useMyStore((state) => state);
+  const taskSearch = getTaskSearch();
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -104,7 +106,7 @@ const SearchControl = () => {
               setTimeout(() => {
                 inputRef.current?.focus();
               }, 0);
-            else setSearchValue("");
+            else setTaskSearch(undefined);
           }}
         >
           <Search className={`h-6 w-6 ${CONTROL_STYLING}`} />
@@ -118,8 +120,11 @@ const SearchControl = () => {
           style={{ outline: "none", boxShadow: "none" }}
           onFocus={(e) => (e.target.style.outline = "none")}
           onBlur={(e) => (e.target.style.outline = "none")}
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
+          value={taskSearch}
+          onChange={(e) => {
+            if (e.target.value === "") setTaskSearch(undefined);
+            else setTaskSearch(e.target.value);
+          }}
         />
         <TooltipContent side="bottom">
           <span>Search</span>

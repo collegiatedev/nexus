@@ -2,10 +2,12 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { TaskTag } from "~/components/taskTag";
 import { OpenModal } from "~/components/ui/modal";
 import { Task } from "~/types";
+import { TaskCard } from "./card";
 
-export const DraggableTask = ({ task }: { task: Task }) => {
+export const DraggableTaskCard = ({ task }: { task: Task }) => {
   const {
     setNodeRef,
     attributes,
@@ -30,7 +32,7 @@ export const DraggableTask = ({ task }: { task: Task }) => {
       <div
         ref={setNodeRef}
         style={style}
-        className="relative flex h-[100px] min-h-[100px] cursor-pointer items-center rounded-xl border-2 border-rose-500 bg-[#0D1117] p-2.5 text-left opacity-30"
+        className="relative flex min-h-[130px] cursor-pointer items-center rounded-xl border-2 border-rose-500 bg-[#0D1117] p-2.5 text-left opacity-30"
       />
     );
   }
@@ -41,14 +43,11 @@ export const DraggableTask = ({ task }: { task: Task }) => {
       style={style}
       {...attributes}
       {...listeners}
-      className="task relative m-1 flex h-[100px] min-h-[100px] cursor-pointer items-center rounded-xl bg-[#505c6f] p-2.5 text-left hover:ring-2 hover:ring-inset hover:ring-rose-500"
+      className="task relative m-1 min-h-[130px] cursor-pointer items-center rounded-xl bg-[#505c6f] p-2.5 text-left hover:ring-2 hover:ring-inset hover:ring-rose-500"
     >
       {/* check if you can add this to day instead */}
       <OpenModal url={`/calendar/task/${task.id}`}>
-        <div className="my-auto h-[90%] w-full overflow-y-auto overflow-x-hidden whitespace-pre-wrap">
-          <span className="text-lg font-bold">{task.name}</span>
-          <p className="text-sm">{task.tags.join(", ")}</p>
-        </div>
+        <TaskCard task={task} />
       </OpenModal>
     </div>
   );

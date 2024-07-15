@@ -1,20 +1,27 @@
 import { TaskTagTypes } from "@prisma/client";
 import { X } from "lucide-react";
 
+import { cn } from "~/lib/utils";
+
 export const TaskTag = ({
   type,
   showDelete = true,
   onDelete,
+  className,
 }: {
   type: TaskTagTypes;
   onDelete?: (type: TaskTagTypes) => void;
   showDelete?: boolean;
+  className?: string;
 }) => {
   const tagColor = getTagColor(type);
 
   return (
     <div
-      className={`rounded-md ${tagColor} flex w-fit cursor-pointer px-2 py-1 text-lg`}
+      className={cn(
+        `rounded-md ${tagColor} flex w-fit cursor-pointer px-2 py-1 text-lg`,
+        className,
+      )}
     >
       {type}
       {onDelete && showDelete && (

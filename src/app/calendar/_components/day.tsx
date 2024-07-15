@@ -3,7 +3,7 @@
 import dayjs, { type Dayjs } from "dayjs";
 import React from "react";
 import clsx from "clsx";
-import { DraggableTask } from "./dnd/draggable";
+import { DraggableTaskCard } from "./dnd/draggable";
 import { DroppableColumn } from "./dnd/droppable";
 import { ViewportTop } from "~/components/viewportTop";
 import { Container } from "~/types";
@@ -36,7 +36,7 @@ const DayTasks = ({ columnId }: { columnId: string }) => {
       {tasks.map((task) => {
         return (
           <div key={task.id} className="h-auto w-auto">
-            <DraggableTask task={task} />
+            <DraggableTaskCard task={task} />
           </div>
         );
       })}

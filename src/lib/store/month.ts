@@ -1,14 +1,17 @@
 import dayjs, { type Dayjs } from "dayjs";
 import { StateCreator } from "zustand";
 
-type Month = {
-  month: number;
-  year: number;
-  daysMatrix: Dayjs[][];
-};
+// calendar nav bar stuff, probably should renamed it lmao
+
 export interface MonthSlice {
+  // task filter stuff
+  taskSearch?: string; // the search string for the calendar
+  // taskFilter: some type; // the filter for the calendar
   calendarMonths: Month[]; // the months that are being displayed in the calendar
   navMonth: Month; // nav state for toggling between months
+
+  getTaskSearch: () => string | undefined;
+  setTaskSearch: (search?: string) => void;
 
   getCalendarMonths: () => Month[];
   setCalendarMonths: (months: Month[]) => void;
@@ -21,6 +24,11 @@ export interface MonthSlice {
   setPreviousMonth: () => void;
   setNextMonth: () => void;
 }
+type Month = {
+  month: number;
+  year: number;
+  daysMatrix: Dayjs[][];
+};
 
 export const createMonthSlice: () => StateCreator<
   MonthSlice,
@@ -88,8 +96,12 @@ export const createMonthSlice: () => StateCreator<
   };
 
   return {
+    taskSearch: undefined,
     navMonth: currentMonth,
     calendarMonths: [currentMonth],
+
+    getTaskSearch: () => get().taskSearch,
+    setTaskSearch: (search?: string) => set({ taskSearch: search }),
 
     getCalendarMonths: () => get().calendarMonths,
     setCalendarMonths: (months: Month[]) => set({ calendarMonths: months }),
