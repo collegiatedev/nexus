@@ -2,7 +2,6 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { TaskTag } from "~/components/taskTag";
 import { OpenModal } from "~/components/ui/modal";
 import { Task } from "~/types";
 import { TaskCard } from "./card";
@@ -27,6 +26,7 @@ export const DraggableTaskCard = ({ task }: { task: Task }) => {
     transform: CSS.Transform.toString(transform),
   };
 
+  // css not synced with card.tsx
   if (isDragging) {
     return (
       <div
