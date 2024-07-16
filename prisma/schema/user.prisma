@@ -1,0 +1,77 @@
+// synced with clerkjs
+model User {
+    id       Int     @id @default(autoincrement())
+    name     String  @db.VarChar(256)
+    email    String  @db.VarChar(256)
+    // taskTags    TaskTag[]
+    mentor   Mentor?
+    client   Client?
+    Family   Family? @relation(fields: [familyId], references: [id])
+    familyId Int?
+    Team     Team?   @relation(fields: [teamId], references: [id])
+    teamId   Int?
+
+    @@map("users")
+}
+
+model Team {
+    id    Int    @id @default(autoincrement())
+    name  String
+    users User[]
+
+    @@map("teams")
+}
+
+model Mentor {
+    userId           Int                @id
+    user             User               @relation(fields: [userId], references: [id])
+    MentorRoleLinker MentorRoleLinker[]
+
+    @@map("mentors")
+}
+
+model MentorRoleLinker {
+    mentorId Int
+    role     MentorRoles
+    mentor   Mentor      @relation(fields: [mentorId], references: [userId])
+
+    @@id([mentorId, role])
+    @@map("mentor_roles_linker")
+}
+
+enum MentorRoles {
+    Counselor @map("counselor")
+    Editor    @map("editor")
+    PM        @map("pm")
+}
+
+model Client {
+    userId Int  @id
+    user   User @relation(fields: [userId], references: [id])
+
+    @@map("clients")
+}
+
+enum ClientRoles {
+    // ya ya, can be boolean but that's lame
+    Student @map("student")
+    Parent  @map("parent")
+}
+
+model Family {
+    id           Int            @id @default(autoincrement())
+    name         String
+    User         User[]
+    FamilyMember FamilyMember[]
+
+    @@map("families")
+}
+
+model FamilyMember {
+    id       Int    @id @default(autoincrement())
+    name     String
+    familyId Int
+    family   Family @relation(fields: [familyId], references: [id])
+
+    @@map("family_members")
+}
